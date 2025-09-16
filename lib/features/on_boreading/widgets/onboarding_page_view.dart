@@ -6,7 +6,7 @@ class OnboardingPageView extends StatelessWidget {
   final List pages;
   final int currentPage;
   final Function(int) onPageChanged;
-  final VoidCallback onGetStarted;
+  final VoidCallback? onGetStarted;
 
   const OnboardingPageView({
     super.key,
@@ -14,7 +14,7 @@ class OnboardingPageView extends StatelessWidget {
     required this.pages,
     required this.currentPage,
     required this.onPageChanged,
-    required this.onGetStarted,
+    this.onGetStarted,
   });
 
   @override
@@ -24,12 +24,7 @@ class OnboardingPageView extends StatelessWidget {
       onPageChanged: onPageChanged,
       itemCount: pages.length,
       itemBuilder: (context, index) {
-        return OnboardinWidget(
-          page: pages[index],
-          isLastPage: index == pages.length - 1,
-          onGetStarted: onGetStarted,
-          animationDelay: index * 200,
-        );
+        return OnboardinWidget(page: pages[index], animationDelay: index * 200);
       },
     );
   }

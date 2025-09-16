@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ico_story_app/core/router/app_router.dart';
 import 'package:ico_story_app/core/style/app_theme.dart';
-import 'package:ico_story_app/features/on_boreading/views/on_boreading_view.dart';
 
 void main() {
   runApp(
-    DevicePreview(enabled: !kReleaseMode, builder: (context) => const MyApp()),
+    //   DevicePreview(enabled: !kReleaseMode, builder: (context) => const MyApp()),
+    MyApp(),
   );
 }
 

@@ -1,17 +1,19 @@
 // ignore_for_file: deprecated_member_use
-
 import 'package:flutter/material.dart';
+import 'package:ico_story_app/core/widgets/custom_button.dart';
 
 class OnboardingBottomNavigation extends StatelessWidget {
   final int currentPage;
   final int totalPages;
   final VoidCallback? onNext;
+  final VoidCallback? onGetStarted;
 
   const OnboardingBottomNavigation({
     super.key,
     required this.currentPage,
     required this.totalPages,
     this.onNext,
+    this.onGetStarted,
   });
 
   bool get isLastPage => currentPage == totalPages - 1;
@@ -21,10 +23,11 @@ class OnboardingBottomNavigation extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(24.0),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           _buildPageIndicator(),
           const SizedBox(height: 24),
-          isLastPage ? const SizedBox.shrink() : _buildNextButton(context),
+          isLastPage ? _buildGetStartedButton() : _buildNextButton(),
         ],
       ),
     );
@@ -51,17 +54,21 @@ class OnboardingBottomNavigation extends StatelessWidget {
     );
   }
 
-  Widget _buildNextButton(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      child: ElevatedButton(
-        onPressed: onNext,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.white,
-          foregroundColor: Theme.of(context).primaryColor,
-        ),
-        child: const Text("التالي"),
-      ),
+  Widget _buildNextButton() {
+    return CustomButton(
+      text: "التالي",
+      onPressed: onNext,
+      backgroundColor: Colors.white,
+      foregroundColor: Colors.black,
+    );
+  }
+
+  Widget _buildGetStartedButton() {
+    return CustomButton(
+      text: "ابدأ الآن",
+      onPressed: onGetStarted,
+      backgroundColor: Colors.white,
+      foregroundColor: Colors.black,
     );
   }
 }

@@ -1,9 +1,10 @@
 // ignore_for_file: deprecated_member_use
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ico_story_app/core/router/app_routes.dart';
+import 'package:ico_story_app/core/style/app_colors.dart';
 import 'package:ico_story_app/core/widgets/background_container.dart';
+import 'package:ico_story_app/core/widgets/custom_text.dart';
 import 'package:ico_story_app/features/on_boreading/widgets/onboarding_bottom_navigation.dart';
 import 'package:ico_story_app/features/on_boreading/widgets/onboarding_page_view.dart';
 import 'package:ico_story_app/features/on_boreading/model/onboarding_model.dart';
@@ -58,13 +59,12 @@ class _OnboardingViewState extends State<OnboardingView> {
                 padding: const EdgeInsets.all(16.0),
                 child: TextButton(
                   onPressed: _skipToEnd,
-                  child: Text(
+                  child: CustomText(
                     "تخطي",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500,
-                    ),
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.white,
+                    mobileFontSize: 18,
+                    tabletFontSize: 35,
                   ),
                 ),
               ),
@@ -74,13 +74,13 @@ class _OnboardingViewState extends State<OnboardingView> {
                 pages: _pages,
                 currentPage: _currentPage,
                 onPageChanged: _onPageChanged,
-                onGetStarted: _navigateToHome,
               ),
             ),
             OnboardingBottomNavigation(
               currentPage: _currentPage,
               totalPages: _pages.length,
               onNext: _nextPage,
+              onGetStarted: _navigateToHome,
             ),
           ],
         ),
