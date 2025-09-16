@@ -55,20 +55,10 @@ class OnboardingBottomNavigation extends StatelessWidget {
   }
 
   Widget _buildNextButton() {
-    return CustomButton(
-      text: "التالي",
-      onPressed: onNext,
-      backgroundColor: Colors.white,
-      foregroundColor: Colors.black,
-    );
+    return CustomButton(text: "التالي", onPressed: onNext);
   }
 
   Widget _buildGetStartedButton() {
-    return CustomButton(
-      text: "ابدأ الآن",
-      onPressed: onGetStarted,
-      backgroundColor: Colors.white,
-      foregroundColor: Colors.black,
-    );
+    return CustomButton(text: "ابدأ الآن", onPressed: onGetStarted);
   }
 }

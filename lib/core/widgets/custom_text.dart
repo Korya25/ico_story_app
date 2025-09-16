@@ -3,35 +3,36 @@ import 'package:ico_story_app/core/utils/context_extension.dart';
 
 class CustomText extends StatelessWidget {
   final String text;
-  final double mobileFontSize;
-  final double tabletFontSize;
+  final double fontSize;
+  final double? tabletFontSize;
   final FontWeight fontWeight;
   final Color color;
   final TextAlign textAlign;
-  final double? height;
 
   const CustomText(
     this.text, {
     super.key,
-    required this.mobileFontSize,
-    required this.tabletFontSize,
+    required this.fontSize,
+    this.tabletFontSize,
     this.fontWeight = FontWeight.normal,
     this.color = Colors.black,
     this.textAlign = TextAlign.start,
-    this.height,
   });
 
   @override
   Widget build(BuildContext context) {
     final isTablet = context.isTablet;
+    final effectiveFontSize = isTablet
+        ? (tabletFontSize ?? fontSize * 1.6)
+        : fontSize;
+
     return Text(
       text,
       textAlign: textAlign,
       style: TextStyle(
-        fontSize: isTablet ? tabletFontSize : mobileFontSize,
+        fontSize: effectiveFontSize,
         fontWeight: fontWeight,
         color: color,
-        height: height,
       ),
     );
   }

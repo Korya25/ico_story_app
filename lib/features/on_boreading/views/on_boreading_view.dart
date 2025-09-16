@@ -63,8 +63,8 @@ class _OnboardingViewState extends State<OnboardingView> {
                     "تخطي",
                     fontWeight: FontWeight.w500,
                     color: AppColors.white,
-                    mobileFontSize: 18,
-                    tabletFontSize: 35,
+                    fontSize: 18,
+                    // 35
                   ),
                 ),
               ),
