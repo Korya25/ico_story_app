@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ico_story_app/core/style/app_colors.dart';
 import 'package:ico_story_app/core/utils/context_extension.dart';
 
 class CustomText extends StatelessWidget {
@@ -15,7 +16,7 @@ class CustomText extends StatelessWidget {
     required this.fontSize,
     this.tabletFontSize,
     this.fontWeight = FontWeight.normal,
-    this.color = Colors.black,
+    this.color = AppColors.textPrimary,
     this.textAlign = TextAlign.start,
   });
 

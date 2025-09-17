@@ -6,7 +6,7 @@ import 'package:ico_story_app/features/on_boreading/views/on_boreading_view.dart
 
 class AppRouter {
   static final GoRouter router = GoRouter(
-    initialLocation: AppRoutes.onboarding,
+    initialLocation: AppRoutes.home,
     routes: [
       GoRoute(
         path: AppRoutes.onboarding,
@@ -23,7 +23,7 @@ class AppRouter {
         pageBuilder: (context, state) => AppTransitions.slideFromRight(
           context: context,
           state: state,
-          child: HomeScreen(),
+          child: HomeView(),
         ),
       ),
     ],

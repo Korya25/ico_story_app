@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ico_story_app/core/constants/app_assets.dart';
 import 'package:ico_story_app/core/style/app_colors.dart';
 
 class OnboardingModel {
@@ -22,28 +23,28 @@ class OnboardingModel {
     OnboardingModel(
       title: "مرحبًا في ICO Stories!",
       description: "استعد لمغامرة ممتعة مع القصص التعليمية للأطفال.",
-      imagePath: 'assets/images/onboreading1.png',
+      imagePath: AppAssets.onboarding1,
       backgroundColor: AppColors.primary,
       iconColor: AppColors.accent,
     ),
     OnboardingModel(
       title: "تصفح القصص بسهولة",
       description: "اختر القصة المفضلة لديك وابدأ القراءة مباشرة.",
-      imagePath: 'assets/images/onboreading2.png',
+      imagePath: AppAssets.onboarding2,
       backgroundColor: AppColors.secondary,
       iconColor: AppColors.white,
     ),
     OnboardingModel(
       title: "استمتع بالانشودة!",
       description: "بعد الانتهاء من كل قصة، استمع إلى الانشودة وتابع الكلمات.",
-      imagePath: 'assets/images/onboreading3.png',
+      imagePath: AppAssets.onboarding3,
       backgroundColor: AppColors.accent,
       iconColor: AppColors.primary,
     ),
     OnboardingModel(
       title: "ابدأ المغامرة الآن!",
       description: "كل شيء جاهز! دعنا نبدأ رحلة التعلم والمرح معًا.",
-      imagePath: 'assets/images/onboreading4.png',
+      imagePath: AppAssets.onboarding4,
       backgroundColor: AppColors.primary,
       iconColor: AppColors.accent,
     ),
@@ -51,7 +52,7 @@ class OnboardingModel {
       title: "إنجاز تفتخر به",
       description:
           "حائزة على جائزة خليفة للإبداع التربوي على مستوى الوطن العربي",
-      imagePath: 'assets/images/onboreading6.png',
+      imagePath: AppAssets.onboarding6,
       backgroundColor: AppColors.primary,
       iconColor: AppColors.accent,
     ),
