@@ -68,7 +68,7 @@ class OnboardinWidget extends StatelessWidget {
             ),
             delay: Duration(milliseconds: animationDelay + 100),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 6),
           AppAnimations.fadeInUp(
             CustomText(
               page.description,

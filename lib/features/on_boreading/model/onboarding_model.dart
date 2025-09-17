@@ -47,5 +47,13 @@ class OnboardingModel {
       backgroundColor: AppColors.primary,
       iconColor: AppColors.accent,
     ),
+    OnboardingModel(
+      title: "إنجاز تفتخر به",
+      description:
+          "حائزة على جائزة خليفة للإبداع التربوي على مستوى الوطن العربي",
+      imagePath: 'assets/images/onboreading6.png',
+      backgroundColor: AppColors.primary,
+      iconColor: AppColors.accent,
+    ),
   ];
 }
