@@ -4,6 +4,7 @@ import 'package:ico_story_app/core/style/app_colors.dart';
 import 'package:ico_story_app/core/utils/context_extension.dart';
 import 'package:ico_story_app/core/widgets/animate_do.dart';
 import 'package:ico_story_app/core/widgets/custom_text.dart';
+import 'package:ico_story_app/features/home/widgets/common/custom_card_bacground.dart';
 import 'package:ico_story_app/features/on_boreading/model/onboarding_model.dart';
 
 class OnboardinWidget extends StatelessWidget {
@@ -43,15 +44,9 @@ class OnboardinWidget extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           AppAnimations.fadeInUp(
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.2),
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: Colors.white.withOpacity(0.3),
-                  width: 2,
-                ),
-              ),
+            CustomCardBacground(
+              borderRadius: 10000,
+              padding: EdgeInsets.all(16),
               child: iconOrImage,
             ),
             delay: Duration(milliseconds: animationDelay),

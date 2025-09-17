@@ -1,7 +1,7 @@
 // ignore_for_file: deprecated_member_use
 import 'package:flutter/material.dart';
 import 'package:ico_story_app/core/constants/app_assets.dart';
-import 'package:ico_story_app/features/home/widgets/home_story_card.dart';
+import 'package:ico_story_app/features/home/widgets/home_view/home_story_card.dart';
 
 class StoriesCardsWidget extends StatelessWidget {
   const StoriesCardsWidget({super.key});

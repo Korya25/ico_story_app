@@ -8,7 +8,7 @@ import 'package:ico_story_app/core/style/app_theme.dart';
 void main() {
   runApp(
     DevicePreview(enabled: !kReleaseMode, builder: (context) => const MyApp()),
-    // MyApp(),
+    //  MyApp(),
   );
 }
 

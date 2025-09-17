@@ -5,7 +5,7 @@ import 'package:ico_story_app/core/style/app_colors.dart';
 import 'package:ico_story_app/core/widgets/animate_do.dart';
 import 'package:ico_story_app/core/widgets/custom_text.dart';
 import 'package:ico_story_app/core/widgets/social_media_row.dart';
-import 'package:ico_story_app/features/home/widgets/custom_card_bacground.dart';
+import 'package:ico_story_app/features/home/widgets/common/custom_card_bacground.dart';
 
 class SocialButton extends StatelessWidget {
   const SocialButton({super.key});
