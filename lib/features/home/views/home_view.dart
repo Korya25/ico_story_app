@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:ico_story_app/core/utils/context_extension.dart';
-import 'package:ico_story_app/core/widgets/about_us_social_button.dart';
+import 'package:ico_story_app/features/home/widgets/about_us_social_button.dart';
 import 'package:ico_story_app/features/home/widgets/home_header.dart';
+import 'package:ico_story_app/features/home/widgets/home_view_body.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({super.key});
@@ -34,14 +35,5 @@ class HomeView extends StatelessWidget {
         ),
       ),
     );
-  }
-}
-
-class HomeViewBody extends StatelessWidget {
-  const HomeViewBody({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Placeholder();
   }
 }

@@ -35,22 +35,16 @@ class SocialMediaRow extends StatelessWidget {
     final isTablet = context.isTablet;
 
     return Row(
+      spacing: isTablet ? 40 : 20,
       mainAxisAlignment: MainAxisAlignment.center,
       children: items
           .map(
-            (item) => Padding(
-              padding: const EdgeInsets.only(right: 24),
-              child: GestureDetector(
-                onTap: () {
-                  onTap?.call(item.platform);
-                  _openUrl(item.url);
-                },
-                child: SvgPicture.asset(
-                  item.icon,
-                  //width: isTablet ? 60 : 30,
-                  height: isTablet ? 70 : 40,
-                ),
-              ),
+            (item) => GestureDetector(
+              onTap: () {
+                onTap?.call(item.platform);
+                _openUrl(item.url);
+              },
+              child: SvgPicture.asset(item.icon, height: isTablet ? 70 : 40),
             ),
           )
           .toList(),
