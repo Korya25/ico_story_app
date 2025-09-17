@@ -29,11 +29,11 @@ class HomeView extends StatelessWidget {
                 HomeHeaderSection(),
                 delay: Duration(milliseconds: 600),
               ),
-              Gap(20),
+              Gap(isTablet ? 80 : 40),
 
               // Main story cards
               StoriesCardsWidget(),
-              Gap(30),
+              Gap(isTablet ? 60 : 30),
 
               // Social media
               SocialButton(),
