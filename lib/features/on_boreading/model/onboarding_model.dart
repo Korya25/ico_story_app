@@ -42,13 +42,6 @@ class OnboardingModel {
       iconColor: AppColors.primary,
     ),
     OnboardingModel(
-      title: "ابدأ المغامرة الآن!",
-      description: "كل شيء جاهز! دعنا نبدأ رحلة التعلم والمرح معًا.",
-      imagePath: AppAssets.onboarding4,
-      backgroundColor: AppColors.primary,
-      iconColor: AppColors.accent,
-    ),
-    OnboardingModel(
       title: "إنجاز تفتخر به",
       description:
           "حائزة على جائزة خليفة للإبداع التربوي على مستوى الوطن العربي",

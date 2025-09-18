@@ -50,7 +50,7 @@ class SocialButton extends StatelessWidget {
           ],
         ),
       ),
-      delay: Duration(milliseconds: 1200),
+      delay: Duration(milliseconds: 1500),
     );
   }
 }

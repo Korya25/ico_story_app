@@ -38,8 +38,6 @@ class StoriesListView extends StatelessWidget {
               ),
             ),
 
-            SliverToBoxAdapter(child: Gap(50)),
-
             SliverToBoxAdapter(
               child: StoriesListSection(categoryTitle: categoryTitle),
             ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:ico_story_app/core/style/app_colors.dart';
 import 'package:ico_story_app/core/utils/context_extension.dart';
@@ -23,23 +24,19 @@ class HomeStoryCard extends StatelessWidget {
       child: Column(
         children: [
           // image card
-          CustomCardBacground(
-            borderRadius: 10000,
-            padding: EdgeInsets.all(16),
-            child: Image.asset(
-              imagePath,
-              height: isTablet ? 150 : 75,
-              width: isTablet ? 150 : 75,
-            ),
-          ),
+          Image.asset(imagePath, width: isTablet ? 150 : 0.18.sh),
           Gap(8),
 
           // title
-          CustomText(
-            title,
-            fontSize: isTablet ? 20 : 18,
-            color: AppColors.white,
-            fontWeight: FontWeight.w700,
+          CustomCardBacground(
+            padding: EdgeInsets.all(8),
+            borderRadius: 4,
+            child: CustomText(
+              title,
+              fontSize: isTablet ? 20 : 18,
+              color: AppColors.white,
+              fontWeight: FontWeight.w700,
+            ),
           ),
         ],
       ),
