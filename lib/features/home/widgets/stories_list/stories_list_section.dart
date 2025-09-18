@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:ico_story_app/core/constants/app_assets.dart';
-import 'package:ico_story_app/core/style/app_colors.dart';
+import 'package:ico_story_app/core/router/app_routes.dart';
 import 'package:ico_story_app/core/utils/context_extension.dart';
 import 'package:ico_story_app/features/home/models/story_model.dart';
-import 'package:ico_story_app/features/home/views/story_reader_screen.dart';
 import 'package:ico_story_app/features/home/widgets/stories_list/story_list_card.dart';
 
 class StoriesListSection extends StatelessWidget {
@@ -34,17 +34,7 @@ class StoriesListSection extends StatelessWidget {
           title: story.title,
           imagePath: AppAssets.icoLogo,
           onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => StoryReaderScreen(
-                  storyTitle: 'أحب ان اختار',
-                  pdfAssetPath: 'assets/pdf/OhebAnAkhtar.pdf',
-                  audioAssetPath: 'audio/OhebAnAkhtar.mp3',
-                  categoryColor: AppColors.primary,
-                ),
-              ),
-            );
+            context.pushNamed(AppRoutes.storyReader);
           },
         );
       },

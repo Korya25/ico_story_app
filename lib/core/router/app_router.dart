@@ -3,11 +3,12 @@ import 'package:ico_story_app/core/router/app_routes.dart';
 import 'package:ico_story_app/core/router/app_transitions.dart';
 import 'package:ico_story_app/features/home/views/home_view.dart';
 import 'package:ico_story_app/features/home/views/stories_list_view.dart';
+import 'package:ico_story_app/features/home/views/story_reader_screen.dart';
 import 'package:ico_story_app/features/on_boreading/views/on_boreading_view.dart';
 
 class AppRouter {
   static final GoRouter router = GoRouter(
-    initialLocation: AppRoutes.home,
+    initialLocation: AppRoutes.storyReader,
     routes: [
       GoRoute(
         path: AppRoutes.onboarding,
@@ -40,6 +41,17 @@ class AppRouter {
               categoryTitle: extras?['categoryTitle'] ?? 'افتراضي',
               storyCount: extras?['storyCount'] ?? 10,
             ),
+          );
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.storyReader,
+        name: AppRoutes.storyReader,
+        pageBuilder: (context, state) {
+          return AppTransitions.slideFromRight(
+            context: context,
+            state: state,
+            child: StoryReaderView(),
           );
         },
       ),

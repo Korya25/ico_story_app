@@ -14,25 +14,25 @@ import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 
 // ===== WORKING STORY READER SCREEN =====
-class StoryReaderScreen extends StatefulWidget {
+class StoryReaderView extends StatefulWidget {
   final String storyTitle;
-  final String pdfAssetPath; // مسار ملف PDF في assets
-  final String audioAssetPath; // مسار ملف الصوت في assets
+  final String pdfAssetPath;
+  final String audioAssetPath;
   final Color categoryColor;
 
-  const StoryReaderScreen({
+  const StoryReaderView({
     super.key,
-    required this.storyTitle,
-    required this.pdfAssetPath,
-    required this.audioAssetPath,
-    required this.categoryColor,
+    this.storyTitle = 'أحب ان أختار',
+    this.pdfAssetPath = 'assets/pdf/OhebAnAkhtar.pdf',
+    this.audioAssetPath = 'audio/OhebAnAkhtar.mp3',
+    this.categoryColor = AppColors.primary,
   });
 
   @override
-  State<StoryReaderScreen> createState() => _StoryReaderScreenState();
+  State<StoryReaderView> createState() => _StoryReaderViewState();
 }
 
-class _StoryReaderScreenState extends State<StoryReaderScreen>
+class _StoryReaderViewState extends State<StoryReaderView>
     with TickerProviderStateMixin {
   // Audio Player
   late AudioPlayer audioPlayer;
