@@ -10,10 +10,9 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'dart:io';
 import 'package:flutter/services.dart';
-// ignore: depend_on_referenced_packages
 import 'package:path_provider/path_provider.dart';
 
-// ===== WORKING STORY READER SCREEN =====
+// ===== MAIN STORY READER SCREEN =====
 class StoryReaderView extends StatefulWidget {
   final String storyTitle;
   final String pdfAssetPath;
@@ -34,118 +33,52 @@ class StoryReaderView extends StatefulWidget {
 
 class _StoryReaderViewState extends State<StoryReaderView>
     with TickerProviderStateMixin {
-  // Audio Player
-  late AudioPlayer audioPlayer;
-  bool isPlaying = false;
-  bool isLoading = true;
-  Duration currentPosition = Duration.zero;
-  Duration totalDuration = Duration.zero;
-  double playbackSpeed = 1.0;
-  double volume = 0.8;
+  // Audio Manager
+  late AudioManager _audioManager;
 
-  // PDF Viewer
-  String? localPdfPath;
-  int currentPage = 0;
-  int totalPages = 0;
-  bool pdfReady = false;
-  PDFViewController? pdfViewController;
+  // PDF Manager
+  late PDFManager _pdfManager;
 
   // Animation Controllers
-  late AnimationController _playButtonController;
   late AnimationController _waveController;
+
+  // State
+  bool _showAudioControls = false;
 
   @override
   void initState() {
     super.initState();
-    _initializeControllers();
-    _initializeAudio();
-    _loadPdfFromAssets();
+    _initializeManagers();
+    _initializeAnimations();
   }
 
-  void _initializeControllers() {
-    _playButtonController = AnimationController(
-      duration: const Duration(milliseconds: 300),
-      vsync: this,
+  void _initializeManagers() {
+    _audioManager = AudioManager(
+      audioAssetPath: widget.audioAssetPath,
+      onStateChanged: () => setState(() {}),
     );
+
+    _pdfManager = PDFManager(
+      pdfAssetPath: widget.pdfAssetPath,
+      storyTitle: widget.storyTitle,
+      onStateChanged: () => setState(() {}),
+    );
+
+    _audioManager.initialize();
+    _pdfManager.initialize();
+  }
+
+  void _initializeAnimations() {
     _waveController = AnimationController(
       duration: const Duration(milliseconds: 1500),
       vsync: this,
     )..repeat();
   }
 
-  Future<void> _initializeAudio() async {
-    audioPlayer = AudioPlayer();
-
-    try {
-      // تحميل الملف الصوتي من assets
-      await audioPlayer.setSource(AssetSource(widget.audioAssetPath));
-
-      // الاستماع لتغييرات مدة الصوت
-      audioPlayer.onDurationChanged.listen((duration) {
-        setState(() {
-          totalDuration = duration;
-          isLoading = false;
-        });
-      });
-
-      // الاستماع لتغييرات موقع التشغيل
-      audioPlayer.onPositionChanged.listen((position) {
-        setState(() {
-          currentPosition = position;
-        });
-      });
-
-      // الاستماع لحالة التشغيل
-      audioPlayer.onPlayerStateChanged.listen((state) {
-        setState(() {
-          isPlaying = state == PlayerState.playing;
-        });
-
-        if (isPlaying) {
-          _playButtonController.forward();
-        } else {
-          _playButtonController.reverse();
-        }
-      });
-
-      // عند انتهاء التشغيل
-      audioPlayer.onPlayerComplete.listen((event) {
-        setState(() {
-          isPlaying = false;
-          currentPosition = Duration.zero;
-        });
-        _playButtonController.reverse();
-      });
-    } catch (e) {
-      print('خطأ في تحميل الملف الصوتي: $e');
-      setState(() {
-        isLoading = false;
-      });
-    }
-  }
-
-  Future<void> _loadPdfFromAssets() async {
-    try {
-      final byteData = await rootBundle.load(widget.pdfAssetPath);
-      final file = File(
-        '${(await getTemporaryDirectory()).path}/${widget.storyTitle}.pdf',
-      );
-      await file.writeAsBytes(byteData.buffer.asUint8List());
-
-      setState(() {
-        localPdfPath = file.path;
-        pdfReady = true;
-      });
-    } catch (e) {
-      print('خطأ في تحميل ملف PDF: $e');
-      // يمكنك عرض رسالة خطأ للمستخدم
-    }
-  }
-
   @override
   void dispose() {
-    audioPlayer.dispose();
-    _playButtonController.dispose();
+    _audioManager.dispose();
+    _pdfManager.dispose();
     _waveController.dispose();
     super.dispose();
   }
@@ -155,14 +88,23 @@ class _StoryReaderViewState extends State<StoryReaderView>
     final isTablet = context.isTablet;
 
     return Scaffold(
-      backgroundColor: AppColors.primary,
+      backgroundColor: widget.categoryColor,
       body: SafeArea(
         child: Column(
           children: [
-            // Header
-            _buildHeader(context),
+            // Simple Header for Children
+            _ChildFriendlyHeader(
+              storyTitle: widget.storyTitle,
+              currentPage: _pdfManager.currentPage,
+              totalPages: _pdfManager.totalPages,
+              isPlaying: _audioManager.isPlaying,
+              onBackPressed: () => Navigator.pop(context),
+              onAudioToggle: () => setState(() {
+                _showAudioControls = !_showAudioControls;
+              }),
+            ),
 
-            // Main Content
+            // Main Content Area
             Expanded(
               child: Container(
                 margin: EdgeInsets.all(isTablet ? 16 : 12),
@@ -174,7 +116,7 @@ class _StoryReaderViewState extends State<StoryReaderView>
                       color: Colors.black.withOpacity(0.1),
                       spreadRadius: 2,
                       blurRadius: 10,
-                      offset: Offset(0, 3),
+                      offset: const Offset(0, 3),
                     ),
                   ],
                 ),
@@ -182,11 +124,33 @@ class _StoryReaderViewState extends State<StoryReaderView>
                   borderRadius: BorderRadius.circular(20),
                   child: Column(
                     children: [
-                      // PDF Viewer
-                      Expanded(child: _buildPDFViewer(context)),
+                      // PDF Viewer - Main Content
+                      Expanded(
+                        child: _OptimizedPDFViewer(
+                          pdfManager: _pdfManager,
+                          categoryColor: widget.categoryColor,
+                          onTap: _audioManager.togglePlayPause,
+                          onSwipeLeft: _pdfManager.nextPage,
+                          onSwipeRight: _pdfManager.previousPage,
+                        ),
+                      ),
 
-                      // Audio Control Panel
-                      _buildAudioControlPanel(context),
+                      // Simple Play Control for Children
+                      _SimpleAudioControl(
+                        audioManager: _audioManager,
+                        categoryColor: widget.categoryColor,
+                        onToggleControls: () => setState(() {
+                          _showAudioControls = !_showAudioControls;
+                        }),
+                      ),
+
+                      // Advanced Audio Controls (Hidden by default)
+                      if (_showAudioControls)
+                        _AdvancedAudioControls(
+                          audioManager: _audioManager,
+                          pdfManager: _pdfManager,
+                          categoryColor: widget.categoryColor,
+                        ),
                     ],
                   ),
                 ),
@@ -197,8 +161,204 @@ class _StoryReaderViewState extends State<StoryReaderView>
       ),
     );
   }
+}
 
-  Widget _buildHeader(BuildContext context) {
+// ===== AUDIO MANAGER =====
+class AudioManager {
+  final String audioAssetPath;
+  final VoidCallback onStateChanged;
+
+  late AudioPlayer _audioPlayer;
+
+  // State
+  bool isPlaying = false;
+  bool isLoading = true;
+  Duration currentPosition = Duration.zero;
+  Duration totalDuration = Duration.zero;
+  double playbackSpeed = 1.0;
+  double volume = 0.8;
+
+  AudioManager({required this.audioAssetPath, required this.onStateChanged});
+
+  Future<void> initialize() async {
+    _audioPlayer = AudioPlayer();
+    await _setupAudioListeners();
+    await _loadAudio();
+  }
+
+  Future<void> _setupAudioListeners() async {
+    _audioPlayer.onDurationChanged.listen((duration) {
+      totalDuration = duration;
+      isLoading = false;
+      onStateChanged();
+    });
+
+    _audioPlayer.onPositionChanged.listen((position) {
+      currentPosition = position;
+      onStateChanged();
+    });
+
+    _audioPlayer.onPlayerStateChanged.listen((state) {
+      isPlaying = state == PlayerState.playing;
+      onStateChanged();
+    });
+
+    _audioPlayer.onPlayerComplete.listen((_) {
+      isPlaying = false;
+      currentPosition = Duration.zero;
+      onStateChanged();
+    });
+  }
+
+  Future<void> _loadAudio() async {
+    try {
+      await _audioPlayer.setSource(AssetSource(audioAssetPath));
+    } catch (e) {
+      print('Audio loading error: $e');
+      isLoading = false;
+      onStateChanged();
+    }
+  }
+
+  // Control Methods
+  Future<void> togglePlayPause() async {
+    try {
+      if (isPlaying) {
+        await _audioPlayer.pause();
+      } else {
+        await _audioPlayer.resume();
+      }
+    } catch (e) {
+      print('Play/Pause error: $e');
+    }
+  }
+
+  Future<void> seekTo(Duration position) async {
+    try {
+      await _audioPlayer.seek(position);
+    } catch (e) {
+      print('Seek error: $e');
+    }
+  }
+
+  Future<void> restart() async {
+    await seekTo(Duration.zero);
+  }
+
+  Future<void> setSpeed(double speed) async {
+    playbackSpeed = speed;
+    await _audioPlayer.setPlaybackRate(speed);
+    onStateChanged();
+  }
+
+  Future<void> setVolume(double vol) async {
+    volume = vol;
+    await _audioPlayer.setVolume(vol);
+    onStateChanged();
+  }
+
+  void dispose() {
+    _audioPlayer.dispose();
+  }
+}
+
+// ===== PDF MANAGER =====
+class PDFManager {
+  final String pdfAssetPath;
+  final String storyTitle;
+  final VoidCallback onStateChanged;
+
+  // State
+  String? localPdfPath;
+  int currentPage = 0;
+  int totalPages = 0;
+  bool pdfReady = false;
+  PDFViewController? pdfViewController;
+
+  PDFManager({
+    required this.pdfAssetPath,
+    required this.storyTitle,
+    required this.onStateChanged,
+  });
+
+  Future<void> initialize() async {
+    await _loadPdfFromAssets();
+  }
+
+  Future<void> _loadPdfFromAssets() async {
+    try {
+      final byteData = await rootBundle.load(pdfAssetPath);
+      final file = File(
+        '${(await getTemporaryDirectory()).path}/$storyTitle.pdf',
+      );
+      await file.writeAsBytes(byteData.buffer.asUint8List());
+
+      localPdfPath = file.path;
+      pdfReady = true;
+      onStateChanged();
+    } catch (e) {
+      print('PDF loading error: $e');
+    }
+  }
+
+  Future<void> nextPage() async {
+    if (pdfViewController != null && currentPage < totalPages - 1) {
+      await pdfViewController!.setPage(currentPage + 1);
+    }
+  }
+
+  Future<void> previousPage() async {
+    if (pdfViewController != null && currentPage > 0) {
+      await pdfViewController!.setPage(currentPage - 1);
+    }
+  }
+
+  Future<void> goToFirstPage() async {
+    if (pdfViewController != null) {
+      await pdfViewController!.setPage(0);
+    }
+  }
+
+  void onViewCreated(PDFViewController controller) {
+    pdfViewController = controller;
+  }
+
+  void onRender(int? pages) {
+    totalPages = pages ?? 0;
+    onStateChanged();
+  }
+
+  void onPageChanged(int? page, int? total) {
+    currentPage = page ?? 0;
+    totalPages = total ?? 0;
+    onStateChanged();
+  }
+
+  void dispose() {
+    // PDF resources are automatically handled
+  }
+}
+
+// ===== CHILD-FRIENDLY HEADER =====
+class _ChildFriendlyHeader extends StatelessWidget {
+  final String storyTitle;
+  final int currentPage;
+  final int totalPages;
+  final bool isPlaying;
+  final VoidCallback onBackPressed;
+  final VoidCallback onAudioToggle;
+
+  const _ChildFriendlyHeader({
+    required this.storyTitle,
+    required this.currentPage,
+    required this.totalPages,
+    required this.isPlaying,
+    required this.onBackPressed,
+    required this.onAudioToggle,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     final isTablet = context.isTablet;
 
     return AppAnimations.slideInDown(
@@ -206,135 +366,148 @@ class _StoryReaderViewState extends State<StoryReaderView>
         padding: EdgeInsets.all(isTablet ? 20 : 16),
         child: Row(
           children: [
-            // Back Button
+            // Big, Friendly Back Button
             GestureDetector(
-              onTap: () => Navigator.pop(context),
+              onTap: onBackPressed,
               child: Container(
-                padding: EdgeInsets.all(isTablet ? 12 : 10),
+                padding: EdgeInsets.all(isTablet ? 15 : 12),
                 decoration: BoxDecoration(
-                  color: AppColors.white.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: AppColors.white.withOpacity(0.3),
-                    width: 1,
-                  ),
+                  color: AppColors.white,
+                  borderRadius: BorderRadius.circular(15),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      spreadRadius: 2,
+                      blurRadius: 8,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
                 ),
                 child: Icon(
                   Icons.arrow_back_ios_new,
-                  color: AppColors.white,
-                  size: isTablet ? 24 : 20,
+                  color: AppColors.primary,
+                  size: isTablet ? 28 : 24,
                 ),
               ),
             ),
 
             Gap(isTablet ? 16 : 12),
 
-            // Story Title
+            // Story Info
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   CustomText(
-                    widget.storyTitle,
-                    fontSize: isTablet ? 20 : 18,
+                    storyTitle,
+                    fontSize: isTablet ? 22 : 20,
                     fontWeight: FontWeight.bold,
                     color: AppColors.white,
                   ),
-                  Gap(4),
-                  if (totalPages > 0)
+                  if (totalPages > 0) ...[
+                    Gap(4),
                     CustomText(
                       'صفحة ${currentPage + 1} من $totalPages',
-                      fontSize: isTablet ? 14 : 12,
-                      color: AppColors.white.withOpacity(0.8),
+                      fontSize: isTablet ? 16 : 14,
+                      color: AppColors.white.withOpacity(0.9),
                     ),
+                  ],
                 ],
               ),
             ),
 
-            // Audio Status Icon
-            if (isLoading)
-              AppAnimations.spin(
-                Icon(
-                  Icons.refresh,
+            // Audio Status - Big and Clear
+            GestureDetector(
+              onTap: onAudioToggle,
+              child: Container(
+                padding: EdgeInsets.all(isTablet ? 15 : 12),
+                decoration: BoxDecoration(
                   color: AppColors.white,
-                  size: isTablet ? 24 : 20,
+                  borderRadius: BorderRadius.circular(15),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      spreadRadius: 2,
+                      blurRadius: 8,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
                 ),
-                duration: Duration(seconds: 1),
-                infinite: true,
-              )
-            else
-              Icon(
-                isPlaying ? Icons.volume_up : Icons.volume_off,
-                color: AppColors.white,
-                size: isTablet ? 24 : 20,
+                child: Icon(
+                  isPlaying ? Icons.volume_up : Icons.volume_off,
+                  color: isPlaying ? Colors.green : AppColors.textSecondary,
+                  size: isTablet ? 28 : 24,
+                ),
               ),
+            ),
           ],
         ),
       ),
     );
   }
+}
 
-  Widget _buildPDFViewer(BuildContext context) {
-    if (!pdfReady || localPdfPath == null) {
-      return _buildLoadingPDF();
+// ===== OPTIMIZED PDF VIEWER =====
+class _OptimizedPDFViewer extends StatelessWidget {
+  final PDFManager pdfManager;
+  final Color categoryColor;
+  final VoidCallback onTap;
+  final VoidCallback onSwipeLeft;
+  final VoidCallback onSwipeRight;
+
+  const _OptimizedPDFViewer({
+    required this.pdfManager,
+    required this.categoryColor,
+    required this.onTap,
+    required this.onSwipeLeft,
+    required this.onSwipeRight,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (!pdfManager.pdfReady || pdfManager.localPdfPath == null) {
+      return _buildLoadingState();
     }
 
     return AppAnimations.fadeIn(
       GestureDetector(
-        onTap: () {
-          // النقر على PDF يوقف/يشغل الصوت
-          _togglePlayPause();
-        },
+        onTap: onTap,
         onHorizontalDragEnd: (details) {
-          // السحب الأفقي للتنقل بين الصفحات
           if (details.primaryVelocity != null) {
             if (details.primaryVelocity! < -50) {
-              // سحب لليسار - الصفحة التالية
-              _nextPage();
+              onSwipeLeft();
             } else if (details.primaryVelocity! > 50) {
-              // سحب لليمين - الصفحة السابقة
-              _previousPage();
+              onSwipeRight();
             }
           }
         },
         child: Container(
+          margin: const EdgeInsets.all(8),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: widget.categoryColor.withOpacity(0.1),
+                color: categoryColor.withOpacity(0.1),
                 spreadRadius: 2,
                 blurRadius: 8,
-                offset: Offset(0, 4),
+                offset: const Offset(0, 4),
               ),
             ],
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(12),
             child: PDFView(
-              filePath: localPdfPath!,
+              filePath: pdfManager.localPdfPath!,
               autoSpacing: true,
               pageFling: true,
               pageSnap: true,
               swipeHorizontal: true,
               nightMode: false,
-              onViewCreated: (PDFViewController pdfViewController) {
-                this.pdfViewController = pdfViewController;
-              },
-              onRender: (pages) {
-                setState(() {
-                  totalPages = pages ?? 0;
-                });
-              },
-              onPageChanged: (page, total) {
-                setState(() {
-                  currentPage = page ?? 0;
-                  totalPages = total ?? 0;
-                });
-              },
-              onError: (error) {
-                print('خطأ في عرض PDF: $error');
-              },
+              enableSwipe: true,
+              onViewCreated: pdfManager.onViewCreated,
+              onRender: pdfManager.onRender,
+              onPageChanged: pdfManager.onPageChanged,
+              onError: (error) => print('PDF Error: $error'),
             ),
           ),
         ),
@@ -342,7 +515,7 @@ class _StoryReaderViewState extends State<StoryReaderView>
     );
   }
 
-  Widget _buildLoadingPDF() {
+  Widget _buildLoadingState() {
     return Center(
       child: AppAnimations.bounceIn(
         Column(
@@ -350,57 +523,45 @@ class _StoryReaderViewState extends State<StoryReaderView>
           children: [
             AppAnimations.spin(
               Container(
-                padding: EdgeInsets.all(20),
+                padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: widget.categoryColor.withOpacity(0.1),
+                  color: categoryColor.withOpacity(0.1),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(
-                  Icons.picture_as_pdf,
-                  size: 60,
-                  color: widget.categoryColor,
-                ),
+                child: Icon(Icons.menu_book, size: 60, color: categoryColor),
               ),
-              duration: Duration(seconds: 2),
+              duration: const Duration(seconds: 2),
               infinite: true,
             ),
-            Gap(20),
+            const Gap(20),
             CustomText(
               'جاري تحميل القصة...',
-              fontSize: 16,
-              color: widget.categoryColor,
+              fontSize: 18,
+              color: categoryColor,
               textAlign: TextAlign.center,
               fontWeight: FontWeight.w600,
             ),
-            Gap(10),
-            Container(
-              width: 150,
-              height: 4,
-              decoration: BoxDecoration(
-                color: widget.categoryColor.withOpacity(0.2),
-                borderRadius: BorderRadius.circular(2),
-              ),
-              child: AppAnimations.slideInRight(
-                Container(
-                  width: 75,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: widget.categoryColor,
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-                duration: Duration(seconds: 2),
-                delay: Duration(milliseconds: 500),
-              ),
-            ),
           ],
         ),
-        delay: Duration(milliseconds: 200),
       ),
     );
   }
+}
 
-  Widget _buildAudioControlPanel(BuildContext context) {
+// ===== SIMPLE AUDIO CONTROL FOR CHILDREN =====
+class _SimpleAudioControl extends StatelessWidget {
+  final AudioManager audioManager;
+  final Color categoryColor;
+  final VoidCallback onToggleControls;
+
+  const _SimpleAudioControl({
+    required this.audioManager,
+    required this.categoryColor,
+    required this.onToggleControls,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     final isTablet = context.isTablet;
 
     return AppAnimations.slideInUp(
@@ -409,171 +570,83 @@ class _StoryReaderViewState extends State<StoryReaderView>
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              widget.categoryColor.withOpacity(0.1),
-              widget.categoryColor.withOpacity(0.05),
+              categoryColor.withOpacity(0.1),
+              categoryColor.withOpacity(0.05),
             ],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
           border: Border(top: BorderSide(color: Colors.grey[200]!, width: 1)),
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            // Progress Bar
-            _buildProgressBar(),
-            Gap(isTablet ? 16 : 12),
+            // Previous Page - Big Button
+            _buildBigButton(
+              icon: Icons.skip_previous,
+              onTap: () {}, // Will be handled by PDF manager
+              size: isTablet ? 50 : 45,
+            ),
 
-            // Control Buttons
-            _buildControlButtons(),
-            Gap(isTablet ? 12 : 8),
+            // Play/Pause - Biggest Button
+            GestureDetector(
+              onTap: audioManager.togglePlayPause,
+              child: Container(
+                padding: EdgeInsets.all(isTablet ? 20 : 18),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [categoryColor, categoryColor.withOpacity(0.8)],
+                  ),
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: categoryColor.withOpacity(0.4),
+                      spreadRadius: 4,
+                      blurRadius: 15,
+                      offset: const Offset(0, 5),
+                    ),
+                  ],
+                ),
+                child: audioManager.isLoading
+                    ? SizedBox(
+                        width: isTablet ? 36 : 32,
+                        height: isTablet ? 36 : 32,
+                        child: const CircularProgressIndicator(
+                          color: AppColors.white,
+                          strokeWidth: 3,
+                        ),
+                      )
+                    : audioManager.isPlaying
+                    ? AppAnimations.pulse(
+                        Icon(
+                          Icons.pause,
+                          color: AppColors.white,
+                          size: isTablet ? 36 : 32,
+                        ),
+                        infinite: true,
+                        duration: const Duration(milliseconds: 1000),
+                      )
+                    : Icon(
+                        Icons.play_arrow,
+                        color: AppColors.white,
+                        size: isTablet ? 36 : 32,
+                      ),
+              ),
+            ),
 
-            // Additional Controls
-            _buildAdditionalControls(),
+            // Next Page - Big Button
+            _buildBigButton(
+              icon: Icons.skip_next,
+              onTap: () {}, // Will be handled by PDF manager
+              size: isTablet ? 50 : 45,
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildProgressBar() {
-    final isTablet = context.isTablet;
-
-    return Column(
-      children: [
-        // Time Display
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            CustomText(
-              _formatDuration(currentPosition),
-              fontSize: isTablet ? 14 : 12,
-              color: AppColors.textSecondary,
-              fontWeight: FontWeight.w600,
-            ),
-            CustomText(
-              _formatDuration(totalDuration),
-              fontSize: isTablet ? 14 : 12,
-              color: AppColors.textSecondary,
-              fontWeight: FontWeight.w600,
-            ),
-          ],
-        ),
-        Gap(8),
-
-        // Progress Slider
-        SliderTheme(
-          data: SliderTheme.of(context).copyWith(
-            activeTrackColor: widget.categoryColor,
-            inactiveTrackColor: widget.categoryColor.withOpacity(0.3),
-            thumbColor: widget.categoryColor,
-            overlayColor: widget.categoryColor.withOpacity(0.2),
-            trackHeight: 6,
-            thumbShape: RoundSliderThumbShape(enabledThumbRadius: 10),
-          ),
-          child: Slider(
-            value: totalDuration.inMilliseconds > 0
-                ? currentPosition.inMilliseconds / totalDuration.inMilliseconds
-                : 0.0,
-            onChanged: (value) {
-              final position = Duration(
-                milliseconds: (value * totalDuration.inMilliseconds).round(),
-              );
-              _seekTo(position);
-            },
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildControlButtons() {
-    final isTablet = context.isTablet;
-
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        // Backward 15s
-        _buildControlButton(
-          icon: Icons.replay_10,
-          onTap: () => _seekBackward(Duration(seconds: 15)),
-          size: isTablet ? 40 : 35,
-        ),
-
-        // Previous Page
-        _buildControlButton(
-          icon: Icons.skip_previous,
-          onTap: _previousPage,
-          size: isTablet ? 45 : 40,
-        ),
-
-        // Play/Pause
-        GestureDetector(
-          onTap: _togglePlayPause,
-          child: Container(
-            padding: EdgeInsets.all(isTablet ? 16 : 14),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  widget.categoryColor,
-                  widget.categoryColor.withOpacity(0.8),
-                ],
-              ),
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: widget.categoryColor.withOpacity(0.4),
-                  spreadRadius: 3,
-                  blurRadius: 12,
-                  offset: Offset(0, 4),
-                ),
-              ],
-            ),
-            child: isLoading
-                ? SizedBox(
-                    width: isTablet ? 32 : 28,
-                    height: isTablet ? 32 : 28,
-                    child: CircularProgressIndicator(
-                      color: AppColors.white,
-                      strokeWidth: 3,
-                    ),
-                  )
-                : isPlaying
-                ? AppAnimations.pulse(
-                    Icon(
-                      Icons.pause,
-                      color: AppColors.white,
-                      size: isTablet ? 32 : 28,
-                    ),
-                    infinite: true,
-                    duration: Duration(milliseconds: 1000),
-                  )
-                : Icon(
-                    Icons.play_arrow,
-                    color: AppColors.white,
-                    size: isTablet ? 32 : 28,
-                  ),
-          ),
-        ),
-
-        // Next Page
-        _buildControlButton(
-          icon: Icons.skip_next,
-          onTap: _nextPage,
-          size: isTablet ? 45 : 40,
-        ),
-
-        // Forward 15s
-        _buildControlButton(
-          icon: Icons.forward_5,
-          onTap: () => _seekForward(Duration(seconds: 15)),
-          size: isTablet ? 40 : 35,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildControlButton({
+  Widget _buildBigButton({
     required IconData icon,
     required VoidCallback onTap,
     required double size,
@@ -581,170 +654,173 @@ class _StoryReaderViewState extends State<StoryReaderView>
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.all(12),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: widget.categoryColor.withOpacity(0.15),
+          color: categoryColor.withOpacity(0.15),
           shape: BoxShape.circle,
-          border: Border.all(
-            color: widget.categoryColor.withOpacity(0.4),
-            width: 2,
-          ),
+          border: Border.all(color: categoryColor.withOpacity(0.4), width: 2),
         ),
-        child: Icon(icon, color: widget.categoryColor, size: size),
+        child: Icon(icon, color: categoryColor, size: size),
+      ),
+    );
+  }
+}
+
+// ===== ADVANCED AUDIO CONTROLS (COLLAPSIBLE) =====
+class _AdvancedAudioControls extends StatelessWidget {
+  final AudioManager audioManager;
+  final PDFManager pdfManager;
+  final Color categoryColor;
+
+  const _AdvancedAudioControls({
+    required this.audioManager,
+    required this.pdfManager,
+    required this.categoryColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isTablet = context.isTablet;
+
+    return AppAnimations.slideInUp(
+      Container(
+        padding: EdgeInsets.all(isTablet ? 16 : 12),
+        decoration: BoxDecoration(
+          color: categoryColor.withOpacity(0.05),
+          border: Border(top: BorderSide(color: Colors.grey[300]!, width: 1)),
+        ),
+        child: Column(
+          children: [
+            // Progress Bar
+            _buildProgressSection(context),
+            Gap(isTablet ? 12 : 10),
+
+            // Additional Controls
+            _buildAdditionalControls(context),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildAdditionalControls() {
-    final isTablet = context.isTablet;
-
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  Widget _buildProgressSection(BuildContext context) {
+    return Column(
       children: [
-        // Speed Control
-        GestureDetector(
-          onTap: _showSpeedDialog,
-          child: Container(
-            padding: EdgeInsets.symmetric(
-              horizontal: isTablet ? 12 : 10,
-              vertical: isTablet ? 8 : 6,
+        // Time Display
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            CustomText(
+              _formatDuration(audioManager.currentPosition),
+              fontSize: 12,
+              color: AppColors.textSecondary,
+              fontWeight: FontWeight.w600,
             ),
-            decoration: BoxDecoration(
-              color: widget.categoryColor.withOpacity(0.15),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: widget.categoryColor.withOpacity(0.4),
-                width: 1,
-              ),
+            CustomText(
+              _formatDuration(audioManager.totalDuration),
+              fontSize: 12,
+              color: AppColors.textSecondary,
+              fontWeight: FontWeight.w600,
             ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  Icons.speed,
-                  color: widget.categoryColor,
-                  size: isTablet ? 18 : 16,
-                ),
-                Gap(4),
-                CustomText(
-                  '${playbackSpeed}x',
-                  fontSize: isTablet ? 14 : 12,
-                  color: widget.categoryColor,
-                  fontWeight: FontWeight.w600,
-                ),
-              ],
-            ),
-          ),
+          ],
         ),
+        const Gap(8),
 
-        // Volume Control
-        GestureDetector(
-          onTap: _showVolumeDialog,
-          child: Container(
-            padding: EdgeInsets.all(isTablet ? 10 : 8),
-            decoration: BoxDecoration(
-              color: widget.categoryColor.withOpacity(0.15),
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: widget.categoryColor.withOpacity(0.4),
-                width: 1,
-              ),
-            ),
-            child: Icon(
-              volume > 0.5
-                  ? Icons.volume_up
-                  : volume > 0
-                  ? Icons.volume_down
-                  : Icons.volume_off,
-              color: widget.categoryColor,
-              size: isTablet ? 20 : 18,
-            ),
+        // Progress Slider
+        SliderTheme(
+          data: SliderTheme.of(context).copyWith(
+            activeTrackColor: categoryColor,
+            inactiveTrackColor: categoryColor.withOpacity(0.3),
+            thumbColor: categoryColor,
+            overlayColor: categoryColor.withOpacity(0.2),
+            trackHeight: 4,
+            thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8),
           ),
-        ),
-
-        // Restart Story
-        GestureDetector(
-          onTap: _restartStory,
-          child: Container(
-            padding: EdgeInsets.all(isTablet ? 10 : 8),
-            decoration: BoxDecoration(
-              color: widget.categoryColor.withOpacity(0.15),
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: widget.categoryColor.withOpacity(0.4),
-                width: 1,
-              ),
-            ),
-            child: Icon(
-              Icons.restart_alt,
-              color: widget.categoryColor,
-              size: isTablet ? 20 : 18,
-            ),
+          child: Slider(
+            value: audioManager.totalDuration.inMilliseconds > 0
+                ? audioManager.currentPosition.inMilliseconds /
+                      audioManager.totalDuration.inMilliseconds
+                : 0.0,
+            onChanged: (value) {
+              final position = Duration(
+                milliseconds:
+                    (value * audioManager.totalDuration.inMilliseconds).round(),
+              );
+              audioManager.seekTo(position);
+            },
           ),
         ),
       ],
     );
   }
 
-  // Audio Control Methods
-  Future<void> _togglePlayPause() async {
-    try {
-      if (isPlaying) {
-        await audioPlayer.pause();
-      } else {
-        await audioPlayer.resume();
-      }
-    } catch (e) {
-      print('خطأ في تشغيل/إيقاف الصوت: $e');
-    }
+  Widget _buildAdditionalControls(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        // Speed Control
+        _buildControlChip(
+          icon: Icons.speed,
+          label: '${audioManager.playbackSpeed}x',
+          onTap: () => _showSpeedDialog(context),
+        ),
+
+        // Volume Control
+        _buildControlChip(
+          icon: audioManager.volume > 0.5
+              ? Icons.volume_up
+              : audioManager.volume > 0
+              ? Icons.volume_down
+              : Icons.volume_off,
+          onTap: () => _showVolumeDialog(context),
+        ),
+
+        // Restart
+        _buildControlChip(
+          icon: Icons.restart_alt,
+          onTap: () {
+            audioManager.restart();
+            pdfManager.goToFirstPage();
+          },
+        ),
+      ],
+    );
   }
 
-  Future<void> _seekTo(Duration position) async {
-    try {
-      await audioPlayer.seek(position);
-    } catch (e) {
-      print('خطأ في الانتقال إلى الموقع: $e');
-    }
+  Widget _buildControlChip({
+    required IconData icon,
+    String? label,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          color: categoryColor.withOpacity(0.15),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: categoryColor.withOpacity(0.4), width: 1),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, color: categoryColor, size: 16),
+            if (label != null) ...[
+              const Gap(4),
+              CustomText(
+                label,
+                fontSize: 12,
+                color: categoryColor,
+                fontWeight: FontWeight.w600,
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
   }
 
-  Future<void> _seekForward(Duration duration) async {
-    final newPosition = currentPosition + duration;
-    if (newPosition < totalDuration) {
-      await _seekTo(newPosition);
-    }
-  }
-
-  Future<void> _seekBackward(Duration duration) async {
-    final newPosition = currentPosition - duration;
-    if (newPosition > Duration.zero) {
-      await _seekTo(newPosition);
-    } else {
-      await _seekTo(Duration.zero);
-    }
-  }
-
-  Future<void> _restartStory() async {
-    await _seekTo(Duration.zero);
-    if (pdfViewController != null) {
-      await pdfViewController!.setPage(0);
-    }
-  }
-
-  // PDF Control Methods
-  Future<void> _nextPage() async {
-    if (pdfViewController != null && currentPage < totalPages - 1) {
-      await pdfViewController!.setPage(currentPage + 1);
-    }
-  }
-
-  Future<void> _previousPage() async {
-    if (pdfViewController != null && currentPage > 0) {
-      await pdfViewController!.setPage(currentPage - 1);
-    }
-  }
-
-  // Dialog Methods
-  void _showSpeedDialog() {
+  void _showSpeedDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -766,13 +842,10 @@ class _StoryReaderViewState extends State<StoryReaderView>
                   ),
                   leading: Radio<double>(
                     value: speed,
-                    groupValue: playbackSpeed,
-                    activeColor: widget.categoryColor,
+                    groupValue: audioManager.playbackSpeed,
+                    activeColor: categoryColor,
                     onChanged: (value) {
-                      setState(() {
-                        playbackSpeed = value!;
-                      });
-                      audioPlayer.setPlaybackRate(playbackSpeed);
+                      audioManager.setSpeed(value!);
                       Navigator.pop(context);
                     },
                   ),
@@ -784,7 +857,7 @@ class _StoryReaderViewState extends State<StoryReaderView>
     );
   }
 
-  void _showVolumeDialog() {
+  void _showVolumeDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -800,25 +873,20 @@ class _StoryReaderViewState extends State<StoryReaderView>
             children: [
               SliderTheme(
                 data: SliderTheme.of(context).copyWith(
-                  activeTrackColor: widget.categoryColor,
-                  thumbColor: widget.categoryColor,
+                  activeTrackColor: categoryColor,
+                  thumbColor: categoryColor,
                 ),
                 child: Slider(
-                  value: volume,
+                  value: audioManager.volume,
                   onChanged: (value) {
-                    setStateDialog(() {
-                      volume = value;
-                    });
-                    setState(() {
-                      volume = value;
-                    });
-                    audioPlayer.setVolume(volume);
+                    setStateDialog(() {});
+                    audioManager.setVolume(value);
                   },
                 ),
               ),
-              Gap(10),
+              const Gap(10),
               CustomText(
-                '${(volume * 100).round()}%',
+                '${(audioManager.volume * 100).round()}%',
                 fontSize: 16,
                 color: AppColors.primary,
                 fontWeight: FontWeight.w600,
@@ -829,7 +897,7 @@ class _StoryReaderViewState extends State<StoryReaderView>
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: CustomText('تم', fontSize: 16, color: widget.categoryColor),
+            child: CustomText('تم', fontSize: 16, color: categoryColor),
           ),
         ],
       ),
