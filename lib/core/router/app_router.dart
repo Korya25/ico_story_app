@@ -7,7 +7,7 @@ import 'package:ico_story_app/features/on_boreading/views/on_boreading_view.dart
 
 class AppRouter {
   static final GoRouter router = GoRouter(
-    initialLocation: AppRoutes.onboarding,
+    initialLocation: AppRoutes.home,
     routes: [
       GoRoute(
         path: AppRoutes.onboarding,

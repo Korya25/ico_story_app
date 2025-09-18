@@ -23,21 +23,21 @@ class HomeView extends StatelessWidget {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              Gap(40),
+              Gap(isTablet ? 10 : 40),
               // Header Section
               AppAnimations.bounceInDown(
                 HomeHeaderSection(),
                 delay: Duration(milliseconds: 600),
               ),
-              Gap(isTablet ? 80 : 40),
+              Gap(isTablet ? 40 : 20),
 
               // Main story cards
               StoriesCardsWidget(),
-              Gap(isTablet ? 60 : 30),
+              Gap(isTablet ? 40 : 20),
 
               // Social media
               SocialButton(),
-              Gap(isTablet ? 32 : 24),
+              Gap(isTablet ? 10 : 10),
             ],
           ),
         ),

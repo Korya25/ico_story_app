@@ -16,6 +16,7 @@ class StoriesCardsWidget extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
         Row(
+          spacing: 16,
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             AppAnimations.bounceInRight(
