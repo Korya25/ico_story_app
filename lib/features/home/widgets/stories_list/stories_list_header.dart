@@ -2,12 +2,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:go_router/go_router.dart';
 import 'package:ico_story_app/core/style/app_colors.dart';
 import 'package:ico_story_app/core/utils/context_extension.dart';
 import 'package:ico_story_app/core/widgets/animate_do.dart';
+import 'package:ico_story_app/core/widgets/custom_back_button.dart';
 import 'package:ico_story_app/core/widgets/custom_text.dart';
-import 'package:ico_story_app/features/home/widgets/common/custom_card_bacground.dart';
 
 class StoriesListHeader extends StatelessWidget {
   const StoriesListHeader({
@@ -26,20 +25,7 @@ class StoriesListHeader extends StatelessWidget {
       children: [
         // Back Button
         AppAnimations.slideInRight(
-          GestureDetector(
-            onTap: () {
-              context.pop();
-            },
-            child: CustomCardBacground(
-              borderRadius: 12,
-              padding: EdgeInsets.all(isTablet ? 12 : 10),
-              child: Icon(
-                Icons.arrow_back_ios_new,
-                color: AppColors.white,
-                size: isTablet ? 24 : 20,
-              ),
-            ),
-          ),
+          CustomBackButton(),
           delay: Duration(milliseconds: 100),
         ),
 

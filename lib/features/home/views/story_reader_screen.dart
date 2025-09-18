@@ -5,11 +5,13 @@ import 'package:gap/gap.dart';
 import 'package:ico_story_app/core/style/app_colors.dart';
 import 'package:ico_story_app/core/utils/context_extension.dart';
 import 'package:ico_story_app/core/widgets/animate_do.dart';
+import 'package:ico_story_app/core/widgets/custom_back_button.dart';
 import 'package:ico_story_app/core/widgets/custom_text.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'dart:io';
 import 'package:flutter/services.dart';
+import 'package:ico_story_app/features/home/widgets/story_reader/story_reader_header.dart';
 import 'package:path_provider/path_provider.dart';
 
 // ===== MAIN STORY READER SCREEN =====
@@ -17,14 +19,12 @@ class StoryReaderView extends StatefulWidget {
   final String storyTitle;
   final String pdfAssetPath;
   final String audioAssetPath;
-  final Color categoryColor;
 
   const StoryReaderView({
     super.key,
     this.storyTitle = 'أحب ان أختار',
     this.pdfAssetPath = 'assets/pdf/OhebAnAkhtar.pdf',
     this.audioAssetPath = 'audio/OhebAnAkhtar.mp3',
-    this.categoryColor = AppColors.primary,
   });
 
   @override
@@ -88,17 +88,15 @@ class _StoryReaderViewState extends State<StoryReaderView>
     final isTablet = context.isTablet;
 
     return Scaffold(
-      backgroundColor: widget.categoryColor,
+      backgroundColor: AppColors.primary,
       body: SafeArea(
         child: Column(
           children: [
-            // Simple Header for Children
-            _ChildFriendlyHeader(
+            // Header
+            StoryReaderHeader(
               storyTitle: widget.storyTitle,
               currentPage: _pdfManager.currentPage,
               totalPages: _pdfManager.totalPages,
-              isPlaying: _audioManager.isPlaying,
-              onBackPressed: () => Navigator.pop(context),
               onAudioToggle: () => setState(() {
                 _showAudioControls = !_showAudioControls;
               }),
@@ -128,7 +126,7 @@ class _StoryReaderViewState extends State<StoryReaderView>
                       Expanded(
                         child: _OptimizedPDFViewer(
                           pdfManager: _pdfManager,
-                          categoryColor: widget.categoryColor,
+                          categoryColor: AppColors.primary,
                           onTap: _audioManager.togglePlayPause,
                           onSwipeLeft: _pdfManager.nextPage,
                           onSwipeRight: _pdfManager.previousPage,
@@ -138,7 +136,7 @@ class _StoryReaderViewState extends State<StoryReaderView>
                       // Simple Play Control for Children
                       _SimpleAudioControl(
                         audioManager: _audioManager,
-                        categoryColor: widget.categoryColor,
+                        categoryColor: AppColors.primary,
                         onToggleControls: () => setState(() {
                           _showAudioControls = !_showAudioControls;
                         }),
@@ -149,7 +147,7 @@ class _StoryReaderViewState extends State<StoryReaderView>
                         _AdvancedAudioControls(
                           audioManager: _audioManager,
                           pdfManager: _pdfManager,
-                          categoryColor: widget.categoryColor,
+                          categoryColor: AppColors.primary,
                         ),
                     ],
                   ),
@@ -336,114 +334,6 @@ class PDFManager {
 
   void dispose() {
     // PDF resources are automatically handled
-  }
-}
-
-// ===== CHILD-FRIENDLY HEADER =====
-class _ChildFriendlyHeader extends StatelessWidget {
-  final String storyTitle;
-  final int currentPage;
-  final int totalPages;
-  final bool isPlaying;
-  final VoidCallback onBackPressed;
-  final VoidCallback onAudioToggle;
-
-  const _ChildFriendlyHeader({
-    required this.storyTitle,
-    required this.currentPage,
-    required this.totalPages,
-    required this.isPlaying,
-    required this.onBackPressed,
-    required this.onAudioToggle,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final isTablet = context.isTablet;
-
-    return AppAnimations.slideInDown(
-      Container(
-        padding: EdgeInsets.all(isTablet ? 20 : 16),
-        child: Row(
-          children: [
-            // Big, Friendly Back Button
-            GestureDetector(
-              onTap: onBackPressed,
-              child: Container(
-                padding: EdgeInsets.all(isTablet ? 15 : 12),
-                decoration: BoxDecoration(
-                  color: AppColors.white,
-                  borderRadius: BorderRadius.circular(15),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      spreadRadius: 2,
-                      blurRadius: 8,
-                      offset: const Offset(0, 3),
-                    ),
-                  ],
-                ),
-                child: Icon(
-                  Icons.arrow_back_ios_new,
-                  color: AppColors.primary,
-                  size: isTablet ? 28 : 24,
-                ),
-              ),
-            ),
-
-            Gap(isTablet ? 16 : 12),
-
-            // Story Info
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  CustomText(
-                    storyTitle,
-                    fontSize: isTablet ? 22 : 20,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.white,
-                  ),
-                  if (totalPages > 0) ...[
-                    Gap(4),
-                    CustomText(
-                      'صفحة ${currentPage + 1} من $totalPages',
-                      fontSize: isTablet ? 16 : 14,
-                      color: AppColors.white.withOpacity(0.9),
-                    ),
-                  ],
-                ],
-              ),
-            ),
-
-            // Audio Status - Big and Clear
-            GestureDetector(
-              onTap: onAudioToggle,
-              child: Container(
-                padding: EdgeInsets.all(isTablet ? 15 : 12),
-                decoration: BoxDecoration(
-                  color: AppColors.white,
-                  borderRadius: BorderRadius.circular(15),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      spreadRadius: 2,
-                      blurRadius: 8,
-                      offset: const Offset(0, 3),
-                    ),
-                  ],
-                ),
-                child: Icon(
-                  isPlaying ? Icons.volume_up : Icons.volume_off,
-                  color: isPlaying ? Colors.green : AppColors.textSecondary,
-                  size: isTablet ? 28 : 24,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }
 
