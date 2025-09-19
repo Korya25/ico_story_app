@@ -6,6 +6,8 @@ import 'package:ico_story_app/core/style/app_colors.dart';
 import 'package:ico_story_app/core/utils/context_extension.dart';
 import 'package:ico_story_app/core/widgets/animate_do.dart';
 import 'package:ico_story_app/core/widgets/custom_text.dart';
+import 'package:ico_story_app/core/widgets/background_container.dart';
+import 'package:ico_story_app/core/widgets/custom_icon_cackground.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'dart:io';
@@ -45,7 +47,9 @@ class _StoryReaderViewState extends State<StoryReaderView>
 
   // State
   bool _showAudioControls = false;
-
+  bool _pageFitCover = false;
+  double _pageScale = 0.98;
+  Alignment _pageAlignment = Alignment.center;
   @override
   void initState() {
     super.initState();
@@ -98,11 +102,12 @@ class _StoryReaderViewState extends State<StoryReaderView>
 
   @override
   Widget build(BuildContext context) {
-    final isTablet = context.isTablet;
+    // Using responsive UI within nested widgets; no local flag needed here
 
     return Scaffold(
-      backgroundColor: AppColors.primary,
-      body: SafeArea(
+      backgroundColor: Colors.transparent,
+      body: BackgroundContainer(
+        color: AppColors.primary,
         child: Column(
           children: [
             // Header
@@ -118,34 +123,31 @@ class _StoryReaderViewState extends State<StoryReaderView>
             // Main Content Area
             Expanded(
               child: Container(
-                margin: EdgeInsets.all(isTablet ? 16 : 12),
-                decoration: BoxDecoration(
-                  color: AppColors.white,
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      spreadRadius: 2,
-                      blurRadius: 10,
-                      offset: const Offset(0, 3),
+                margin: EdgeInsets.zero,
+                color: AppColors.cardBackground,
+                child: Stack(
+                  children: [
+                    // PDF Viewer - Main Content (fills available space)
+                    Positioned.fill(
+                      child: PdfBookFlipLocal(
+                        fitCover: _pageFitCover,
+                        scale: _pageScale,
+                        alignment: _pageAlignment,
+                      ),
                     ),
-                  ],
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
-                  child: Column(
-                    children: [
-                      // PDF Viewer - Main Content
-                      Expanded(child: PdfBookFlipLocal()),
 
-                      // Audio Controls (Shown only when toggled)
-                      if (_showAudioControls)
-                        _AudioControls(
+                    // Audio Controls overlay (does not affect layout)
+                    if (_showAudioControls)
+                      Positioned(
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        child: _AudioControls(
                           audioManager: _audioManager,
-                          categoryColor: AppColors.primary,
+                          categoryColor: AppColors.textPrimary,
                         ),
-                    ],
-                  ),
+                      ),
+                  ],
                 ),
               ),
             ),
@@ -407,49 +409,32 @@ class _AudioControls extends StatelessWidget {
             const Gap(6),
             // Play / Pause Button only
             Center(
-              child: GestureDetector(
+              child: CustomIconBackground(
                 onTap: audioManager.togglePlayPause,
-                child: Container(
-                  padding: EdgeInsets.all(isTablet ? 20 : 18),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [categoryColor, categoryColor.withOpacity(0.85)],
-                    ),
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: categoryColor.withOpacity(0.35),
-                        spreadRadius: 4,
-                        blurRadius: 15,
-                        offset: const Offset(0, 5),
-                      ),
-                    ],
-                  ),
-                  child: audioManager.isLoading
-                      ? SizedBox(
-                          width: isTablet ? 36 : 32,
-                          height: isTablet ? 36 : 32,
-                          child: const CircularProgressIndicator(
-                            color: AppColors.white,
-                            strokeWidth: 3,
-                          ),
-                        )
-                      : audioManager.isPlaying
-                      ? AppAnimations.pulse(
-                          Icon(
-                            Icons.pause,
-                            color: AppColors.white,
-                            size: isTablet ? 36 : 32,
-                          ),
-                          infinite: true,
-                          duration: const Duration(milliseconds: 1000),
-                        )
-                      : Icon(
-                          Icons.play_arrow,
-                          color: AppColors.white,
+                child: audioManager.isLoading
+                    ? SizedBox(
+                        width: isTablet ? 36 : 32,
+                        height: isTablet ? 36 : 32,
+                        child: const CircularProgressIndicator(
+                          color: AppColors.primary,
+                          strokeWidth: 3,
+                        ),
+                      )
+                    : audioManager.isPlaying
+                    ? AppAnimations.pulse(
+                        Icon(
+                          Icons.pause,
+                          color: AppColors.primary,
                           size: isTablet ? 36 : 32,
                         ),
-                ),
+                        infinite: true,
+                        duration: const Duration(milliseconds: 1000),
+                      )
+                    : Icon(
+                        Icons.play_arrow,
+                        color: AppColors.primary,
+                        size: isTablet ? 36 : 32,
+                      ),
               ),
             ),
           ],
@@ -467,7 +452,15 @@ class _AudioControls extends StatelessWidget {
 }
 
 class PdfBookFlipLocal extends StatefulWidget {
-  const PdfBookFlipLocal({super.key});
+  const PdfBookFlipLocal({
+    super.key,
+    this.fitCover = true,
+    this.scale = 1.0,
+    this.alignment = Alignment.center,
+  });
+  final bool fitCover;
+  final double scale;
+  final Alignment alignment;
 
   @override
   State<PdfBookFlipLocal> createState() => _PdfBookFlipLocalState();
@@ -496,7 +489,7 @@ class _PdfBookFlipLocalState extends State<PdfBookFlipLocal> {
       );
 
       if (pageImage != null) {
-        pages.add(Image.memory(pageImage.bytes, fit: BoxFit.contain));
+        pages.add(Image.memory(pageImage.bytes));
       }
 
       await page.close();
@@ -511,10 +504,53 @@ class _PdfBookFlipLocalState extends State<PdfBookFlipLocal> {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
-    return PageFlipWidget(
-      //
-      key: _controller,
-      children: pages,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final width = constraints.maxWidth;
+        final height = constraints.maxHeight;
+
+        final fit = widget.fitCover ? BoxFit.cover : BoxFit.contain;
+        final scaledWidth = width * widget.scale;
+        final scaledHeight = height * widget.scale;
+
+        final fullBleedPages = pages.map((img) {
+          return SizedBox.expand(
+            child: Stack(
+              children: [
+                FittedBox(
+                  fit: fit,
+                  alignment: widget.alignment,
+                  child: SizedBox(
+                    width: scaledWidth,
+                    height: scaledHeight,
+                    child: img,
+                  ),
+                ),
+                Positioned(
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  child: Container(
+                    height: 20,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          AppColors.primary.withOpacity(0.85),
+                          AppColors.primary.withOpacity(0.0),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        }).toList();
+
+        return PageFlipWidget(key: _controller, children: fullBleedPages);
+      },
     );
   }
 }
