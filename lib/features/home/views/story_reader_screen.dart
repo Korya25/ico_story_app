@@ -12,7 +12,9 @@ import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:ico_story_app/features/home/widgets/story_reader/story_reader_header.dart';
+import 'package:page_flip/page_flip.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:pdfx/pdfx.dart';
 
 // ===== MAIN STORY READER SCREEN =====
 class StoryReaderView extends StatefulWidget {
@@ -123,15 +125,7 @@ class _StoryReaderViewState extends State<StoryReaderView>
                   child: Column(
                     children: [
                       // PDF Viewer - Main Content
-                      Expanded(
-                        child: _OptimizedPDFViewer(
-                          pdfManager: _pdfManager,
-                          categoryColor: AppColors.primary,
-                          onTap: _audioManager.togglePlayPause,
-                          onSwipeLeft: _pdfManager.nextPage,
-                          onSwipeRight: _pdfManager.previousPage,
-                        ),
-                      ),
+                      Expanded(child: PdfBookFlipLocal()),
 
                       // Simple Play Control for Children
                       _SimpleAudioControl(
@@ -334,107 +328,6 @@ class PDFManager {
 
   void dispose() {
     // PDF resources are automatically handled
-  }
-}
-
-// ===== OPTIMIZED PDF VIEWER =====
-class _OptimizedPDFViewer extends StatelessWidget {
-  final PDFManager pdfManager;
-  final Color categoryColor;
-  final VoidCallback onTap;
-  final VoidCallback onSwipeLeft;
-  final VoidCallback onSwipeRight;
-
-  const _OptimizedPDFViewer({
-    required this.pdfManager,
-    required this.categoryColor,
-    required this.onTap,
-    required this.onSwipeLeft,
-    required this.onSwipeRight,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    if (!pdfManager.pdfReady || pdfManager.localPdfPath == null) {
-      return _buildLoadingState();
-    }
-
-    return AppAnimations.fadeIn(
-      GestureDetector(
-        onTap: onTap,
-        onHorizontalDragEnd: (details) {
-          if (details.primaryVelocity != null) {
-            if (details.primaryVelocity! < -50) {
-              onSwipeLeft();
-            } else if (details.primaryVelocity! > 50) {
-              onSwipeRight();
-            }
-          }
-        },
-        child: Container(
-          margin: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: [
-              BoxShadow(
-                color: categoryColor.withOpacity(0.1),
-                spreadRadius: 2,
-                blurRadius: 8,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child: PDFView(
-              filePath: pdfManager.localPdfPath!,
-              autoSpacing: true,
-              pageFling: true,
-              pageSnap: true,
-              swipeHorizontal: true,
-              nightMode: false,
-              enableSwipe: true,
-              onViewCreated: pdfManager.onViewCreated,
-              onRender: pdfManager.onRender,
-              onPageChanged: pdfManager.onPageChanged,
-              onError: (error) => print('PDF Error: $error'),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildLoadingState() {
-    return Center(
-      child: AppAnimations.bounceIn(
-        Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            AppAnimations.spin(
-              Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: categoryColor.withOpacity(0.1),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(Icons.menu_book, size: 60, color: categoryColor),
-              ),
-              duration: const Duration(seconds: 2),
-              infinite: true,
-            ),
-            const Gap(20),
-            CustomText(
-              'جاري تحميل القصة...',
-              fontSize: 18,
-              color: categoryColor,
-              textAlign: TextAlign.center,
-              fontWeight: FontWeight.w600,
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }
 
@@ -799,5 +692,58 @@ class _AdvancedAudioControls extends StatelessWidget {
     final minutes = twoDigits(duration.inMinutes);
     final seconds = twoDigits(duration.inSeconds.remainder(60));
     return '$minutes:$seconds';
+  }
+}
+
+class PdfBookFlipLocal extends StatefulWidget {
+  const PdfBookFlipLocal({super.key});
+
+  @override
+  State<PdfBookFlipLocal> createState() => _PdfBookFlipLocalState();
+}
+
+class _PdfBookFlipLocalState extends State<PdfBookFlipLocal> {
+  final _controller = GlobalKey<PageFlipWidgetState>();
+  List<Image> pages = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPages();
+  }
+
+  Future<void> _loadPages() async {
+    final doc = await PdfDocument.openAsset('assets/pdf/OhebAnAkhtar.pdf');
+
+    for (int i = 1; i <= doc.pagesCount; i++) {
+      final page = await doc.getPage(i);
+
+      final pageImage = await page.render(
+        width: page.width,
+        height: page.height,
+        format: PdfPageImageFormat.png,
+      );
+
+      if (pageImage != null) {
+        pages.add(Image.memory(pageImage.bytes, fit: BoxFit.contain));
+      }
+
+      await page.close();
+    }
+
+    setState(() {});
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (pages.isEmpty) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
+    return PageFlipWidget(
+      //
+      key: _controller,
+      children: pages,
+    );
   }
 }
