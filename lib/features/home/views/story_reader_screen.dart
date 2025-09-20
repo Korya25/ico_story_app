@@ -53,13 +53,17 @@ class _StoryReaderViewState extends State<StoryReaderView>
   void _initializeManagers() {
     _audioManager = AudioManager(
       audioAssetPath: widget.audioAssetPath,
-      onStateChanged: () => setState(() {}),
+      onStateChanged: () {
+        if (mounted) setState(() {});
+      },
     );
 
     _pdfManager = PDFManager(
       pdfAssetPath: widget.pdfAssetPath,
       storyTitle: widget.storyTitle,
-      onStateChanged: () => setState(() {}),
+      onStateChanged: () {
+        if (mounted) setState(() {});
+      },
     );
 
     _audioManager.initialize();

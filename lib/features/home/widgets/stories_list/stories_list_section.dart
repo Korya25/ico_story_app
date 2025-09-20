@@ -15,7 +15,7 @@ class StoriesListSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final isTablet = context.isTablet;
 
-    final stories = StoryModel.getStoriesForCategory(categoryTitle);
+    final stories = StoryList.getStoriesForCategory(categoryTitle);
 
     return GridView.builder(
       shrinkWrap: true,

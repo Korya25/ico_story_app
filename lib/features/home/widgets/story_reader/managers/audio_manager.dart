@@ -1,5 +1,6 @@
 // ignore_for_file: deprecated_member_use, avoid_print
 
+import 'dart:async';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
 
@@ -8,6 +9,12 @@ class AudioManager {
   final VoidCallback onStateChanged;
 
   late AudioPlayer _audioPlayer;
+
+  // Stream subscriptions to cancel on dispose
+  StreamSubscription<Duration>? _durationSubscription;
+  StreamSubscription<Duration>? _positionSubscription;
+  StreamSubscription<PlayerState>? _stateSubscription;
+  StreamSubscription<void>? _completeSubscription;
 
   // State
   bool isPlaying = false;
@@ -26,23 +33,23 @@ class AudioManager {
   }
 
   Future<void> _setupAudioListeners() async {
-    _audioPlayer.onDurationChanged.listen((duration) {
+    _durationSubscription = _audioPlayer.onDurationChanged.listen((duration) {
       totalDuration = duration;
       isLoading = false;
       onStateChanged();
     });
 
-    _audioPlayer.onPositionChanged.listen((position) {
+    _positionSubscription = _audioPlayer.onPositionChanged.listen((position) {
       currentPosition = position;
       onStateChanged();
     });
 
-    _audioPlayer.onPlayerStateChanged.listen((state) {
+    _stateSubscription = _audioPlayer.onPlayerStateChanged.listen((state) {
       isPlaying = state == PlayerState.playing;
       onStateChanged();
     });
 
-    _audioPlayer.onPlayerComplete.listen((_) {
+    _completeSubscription = _audioPlayer.onPlayerComplete.listen((_) {
       isPlaying = false;
       currentPosition = Duration.zero;
       onStateChanged();
@@ -102,6 +109,13 @@ class AudioManager {
   }
 
   void dispose() {
+    // Cancel all stream subscriptions first
+    _durationSubscription?.cancel();
+    _positionSubscription?.cancel();
+    _stateSubscription?.cancel();
+    _completeSubscription?.cancel();
+
+    // Then dispose the audio player
     _audioPlayer.dispose();
   }
 }
