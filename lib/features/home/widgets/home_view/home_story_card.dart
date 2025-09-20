@@ -23,7 +23,7 @@ class HomeStoryCard extends StatelessWidget {
       child: Column(
         children: [
           // image card
-          Image.asset(imagePath, width: isTablet ? 0.4.sh : 0.2.sh),
+          Image.asset(imagePath, width: isTablet ? 0.4.sh : 0.18.sh),
           Gap(8),
 
           // title
