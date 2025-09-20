@@ -5,6 +5,7 @@ import 'app_colors.dart';
 class AppTheme {
   static ThemeData get childTheme {
     return ThemeData(
+      scaffoldBackgroundColor: AppColors.primary,
       primaryColor: AppColors.primary,
       colorScheme: ColorScheme.fromSeed(
         seedColor: AppColors.primary,
