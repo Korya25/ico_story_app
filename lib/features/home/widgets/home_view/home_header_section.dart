@@ -21,18 +21,19 @@ class HomeHeaderSection extends StatelessWidget {
           ),
           Gap(isTablet ? 24 : 18),
           CustomText(
-            '🌟 أهلاً وسهلاً بك في عالم القصص الرائع! 🌟',
+            '🌟 أهلاً  بك في عالم القصص الرائع! 🌟',
             fontSize: isTablet ? 20 : 18,
-            fontWeight: FontWeight.bold,
-            color: AppColors.white,
+            fontWeight: FontWeight.w800,
+            color: AppColors.textPrimary,
             textAlign: TextAlign.center,
           ),
           Gap(isTablet ? 16 : 8),
           CustomText(
-            'اختر مجموعة القصص المفضلة لديك واستمتع بالمغامرة!',
+            'اختر مجموعة القصص المفضلة لديك\n واستمتع بالمغامرة',
             fontSize: isTablet ? 18 : 16,
-            color: AppColors.white,
+            color: AppColors.textPrimary,
             textAlign: TextAlign.center,
+            fontWeight: FontWeight.w400,
           ),
         ],
       ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:ico_story_app/core/constants/app_assets.dart';
+import 'package:ico_story_app/core/constants/app_constant.dart';
 import 'package:ico_story_app/core/style/app_colors.dart';
 import 'package:ico_story_app/core/widgets/animate_do.dart';
 import 'package:ico_story_app/core/widgets/custom_text.dart';
@@ -19,28 +20,28 @@ class SocialButton extends StatelessWidget {
           children: [
             CustomText(
               ' تابعونا للمزيد من المتعة ',
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: AppColors.white,
+              fontSize: 18,
+              fontWeight: FontWeight.w800,
+              color: AppColors.textPrimary,
               textAlign: TextAlign.center,
             ),
             Gap(24),
             SocialMediaRow(
               items: [
                 SocialMediaItem(
-                  platform: "twitter",
+                  platform: AppConstant.twitter,
                   icon: AppAssets.x,
-                  url: "https://x.com/ICOnetwork",
+                  url: AppConstant.twitterLink,
                 ),
                 SocialMediaItem(
-                  platform: "insta",
+                  platform: AppConstant.insta,
                   icon: AppAssets.insta,
-                  url: "https://www.instagram.com/iconetwork/",
+                  url: AppConstant.instaLink,
                 ),
                 SocialMediaItem(
-                  platform: "facebook",
+                  platform: AppConstant.facebook,
                   icon: AppAssets.facebook,
-                  url: "https://www.facebook.com/ICONetwork",
+                  url: AppConstant.facebookLink,
                 ),
               ],
               onTap: (platform) {
