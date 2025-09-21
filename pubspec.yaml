@@ -79,6 +79,8 @@ flutter:
     - assets/audio/char/
     - assets/pdf/tarbawia/
     - assets/pdf/char/
+    - assets/images/tarbawia_image/
+    - assets/images/char_image/
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
