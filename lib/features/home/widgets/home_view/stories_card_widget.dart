@@ -2,8 +2,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ico_story_app/core/constants/app_assets.dart';
+import 'package:ico_story_app/core/constants/app_constant.dart';
 import 'package:ico_story_app/core/router/app_routes.dart';
 import 'package:ico_story_app/core/widgets/animate_do.dart';
+import 'package:ico_story_app/features/home/models/story_model.dart';
 import 'package:ico_story_app/features/home/widgets/home_view/home_story_card.dart';
 
 class StoriesCardsWidget extends StatelessWidget {
@@ -24,7 +26,10 @@ class StoriesCardsWidget extends StatelessWidget {
               HomeStoryCard(
                 onTap: () => context.pushNamed(
                   AppRoutes.storiesList,
-                  extra: {'categoryTitle': 'قصص حروف', 'storyCount': 20},
+                  extra: {
+                    AppConstant.categoryTitle: AppConstant.char,
+                    AppConstant.storyCount: StoryList.getTarChaStories.length,
+                  },
                 ),
                 imagePath: AppAssets.charsStories,
                 title: 'قصص حروف',
@@ -39,7 +44,10 @@ class StoriesCardsWidget extends StatelessWidget {
                 onTap: () => context.pushNamed(
                   AppRoutes.storiesList,
 
-                  extra: {'categoryTitle': 'قصص سيرة', 'storyCount': 8},
+                  extra: {
+                    AppConstant.categoryTitle: AppConstant.surah,
+                    AppConstant.storyCount: StoryList.gettarSurahStories.length,
+                  },
                 ),
               ),
             ),
@@ -55,7 +63,10 @@ class StoriesCardsWidget extends StatelessWidget {
             title: 'كنوز المعرفة',
             onTap: () => context.pushNamed(
               AppRoutes.storiesList,
-              extra: {'categoryTitle': 'كنوز القيم', 'storyCount': 11},
+              extra: {
+                AppConstant.categoryTitle: AppConstant.tarbawia,
+                AppConstant.storyCount: StoryList.getTarbawiaStories.length,
+              },
             ),
           ),
         ),

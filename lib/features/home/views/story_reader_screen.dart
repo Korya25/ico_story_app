@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:ico_story_app/core/style/app_colors.dart';
 import 'package:ico_story_app/core/widgets/background_container.dart';
+import 'package:ico_story_app/features/home/models/story_model.dart';
 import 'package:ico_story_app/features/home/widgets/story_reader/story_reader_header.dart';
 import 'package:ico_story_app/features/home/widgets/story_reader/pdf_book_flip_local.dart';
 import 'package:ico_story_app/features/home/widgets/story_reader/audio_controls.dart';
@@ -11,16 +12,9 @@ import 'package:ico_story_app/features/home/widgets/story_reader/managers/pdf_ma
 
 // ===== MAIN STORY READER SCREEN =====
 class StoryReaderView extends StatefulWidget {
-  final String storyTitle;
-  final String pdfAssetPath;
-  final String audioAssetPath;
+  final StoryModel story;
 
-  const StoryReaderView({
-    super.key,
-    this.storyTitle = 'أحب ان أختار',
-    this.pdfAssetPath = 'assets/pdf/OhebAnAkhtar.pdf',
-    this.audioAssetPath = 'audio/OhebAnAkhtar.mp3',
-  });
+  const StoryReaderView({super.key, required this.story});
 
   @override
   State<StoryReaderView> createState() => _StoryReaderViewState();
@@ -52,15 +46,15 @@ class _StoryReaderViewState extends State<StoryReaderView>
 
   void _initializeManagers() {
     _audioManager = AudioManager(
-      audioAssetPath: widget.audioAssetPath,
+      audioAssetPath: widget.story.audioPath,
       onStateChanged: () {
         if (mounted) setState(() {});
       },
     );
 
     _pdfManager = PDFManager(
-      pdfAssetPath: widget.pdfAssetPath,
-      storyTitle: widget.storyTitle,
+      pdfAssetPath: widget.story.pdfPath,
+      storyTitle: widget.story.title,
       onStateChanged: () {
         if (mounted) setState(() {});
       },
@@ -106,7 +100,7 @@ class _StoryReaderViewState extends State<StoryReaderView>
           children: [
             // Header
             StoryReaderHeader(
-              storyTitle: widget.storyTitle,
+              storyTitle: widget.story.title,
               currentPage: _pdfManager.currentPage,
               totalPages: _pdfManager.totalPages,
               onAudioToggle: () => setState(() {
@@ -127,7 +121,7 @@ class _StoryReaderViewState extends State<StoryReaderView>
                         fitCover: _pageFitCover,
                         scale: _pageScale,
                         alignment: _pageAlignment,
-                        pdfPath: widget.pdfAssetPath,
+                        pdfPath: widget.story.pdfPath,
                       ),
                     ),
 

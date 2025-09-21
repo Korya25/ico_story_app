@@ -34,7 +34,7 @@ class StoriesListSection extends StatelessWidget {
           title: story.title,
           imagePath: AppAssets.icoLogo,
           onTap: () {
-            context.pushNamed(AppRoutes.storyReader);
+            context.pushNamed(AppRoutes.storyReader, extra: story);
           },
         );
       },

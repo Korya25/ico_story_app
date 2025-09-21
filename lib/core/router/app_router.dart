@@ -1,6 +1,8 @@
 import 'package:go_router/go_router.dart';
+import 'package:ico_story_app/core/constants/app_constant.dart';
 import 'package:ico_story_app/core/router/app_routes.dart';
 import 'package:ico_story_app/core/router/app_transitions.dart';
+import 'package:ico_story_app/features/home/models/story_model.dart';
 import 'package:ico_story_app/features/home/views/home_view.dart';
 import 'package:ico_story_app/features/home/views/stories_list_view.dart';
 import 'package:ico_story_app/features/home/views/story_reader_screen.dart';
@@ -38,8 +40,8 @@ class AppRouter {
             state: state,
 
             child: StoriesListView(
-              categoryTitle: extras?['categoryTitle'] ?? 'افتراضي',
-              storyCount: extras?['storyCount'] ?? 10,
+              categoryTitle: extras?[AppConstant.categoryTitle],
+              storyCount: extras?[AppConstant.storyCount],
             ),
           );
         },
@@ -48,10 +50,12 @@ class AppRouter {
         path: AppRoutes.storyReader,
         name: AppRoutes.storyReader,
         pageBuilder: (context, state) {
+          final story = state.extra as StoryModel;
+
           return AppTransitions.slideFromRight(
             context: context,
             state: state,
-            child: StoryReaderView(),
+            child: StoryReaderView(story: story),
           );
         },
       ),

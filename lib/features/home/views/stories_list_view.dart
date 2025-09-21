@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:ico_story_app/core/style/app_colors.dart';
 import 'package:ico_story_app/core/utils/context_extension.dart';
+import 'package:ico_story_app/core/utils/function.dart';
 import 'package:ico_story_app/features/home/widgets/stories_list/stories_list_header.dart';
 import 'package:ico_story_app/features/home/widgets/stories_list/stories_list_section.dart';
 
@@ -33,7 +34,7 @@ class StoriesListView extends StatelessWidget {
 
             SliverToBoxAdapter(
               child: StoriesListHeader(
-                categoryTitle: categoryTitle,
+                categoryTitle: returnTitle(categoryTitle),
                 storyCount: storyCount,
               ),
             ),

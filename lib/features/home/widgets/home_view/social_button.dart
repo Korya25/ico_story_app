@@ -30,17 +30,17 @@ class SocialButton extends StatelessWidget {
                 SocialMediaItem(
                   platform: "twitter",
                   icon: AppAssets.x,
-                  url: "https://twitter.com/ensan",
+                  url: "https://x.com/ICOnetwork",
                 ),
                 SocialMediaItem(
                   platform: "insta",
                   icon: AppAssets.insta,
-                  url: "https://instagram.com/ensan",
+                  url: "https://www.instagram.com/iconetwork/",
                 ),
                 SocialMediaItem(
                   platform: "facebook",
                   icon: AppAssets.facebook,
-                  url: "https://facebook.com/ensan",
+                  url: "https://www.facebook.com/ICONetwork",
                 ),
               ],
               onTap: (platform) {
