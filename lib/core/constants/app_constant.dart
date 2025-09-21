@@ -4,4 +4,5 @@ class AppConstant {
   static const String surah = 'surah';
   static const String categoryTitle = 'categoryTitle';
   static const String storyCount = 'storyCount';
+  static const String tajawal = 'Tajawal';
 }

@@ -6,11 +6,10 @@ class AppColors {
   static const Color secondary = Color(0xFF51B0B9);
   static const Color accent = Color(0xFFAAC34B);
   static const Color white = Color(0xFFFFFFFF);
-  static const Color lightGray = Color(0xFFF5F5F5);
   static const Color darkGray = Color(0xFF666666);
+  static const Color soundBackground = Color(0xFF1F2937);
+  static const Color cardBackground = white;
 
   // Extended semantic colors
-  static const Color textPrimary = Color(0xFF1F2937);
-  static const Color textSecondary = Color(0xFF6B7280);
-  static const Color cardBackground = white;
+  static const Color textPrimary = Colors.white;
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ico_story_app/core/constants/app_constant.dart';
 import 'app_colors.dart';
 
 // App Theme Class
@@ -11,7 +12,7 @@ class AppTheme {
         seedColor: AppColors.primary,
         secondary: AppColors.secondary,
       ),
-      fontFamily: 'Cairo',
+      fontFamily: AppConstant.tajawal,
       textTheme: const TextTheme(
         headlineLarge: TextStyle(
           fontSize: 28,

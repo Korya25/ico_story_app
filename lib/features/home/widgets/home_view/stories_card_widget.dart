@@ -5,7 +5,7 @@ import 'package:ico_story_app/core/constants/app_assets.dart';
 import 'package:ico_story_app/core/constants/app_constant.dart';
 import 'package:ico_story_app/core/router/app_routes.dart';
 import 'package:ico_story_app/core/widgets/animate_do.dart';
-import 'package:ico_story_app/features/home/models/story_model.dart';
+import 'package:ico_story_app/features/home/models/story_list.dart';
 import 'package:ico_story_app/features/home/widgets/home_view/home_story_card.dart';
 
 class StoriesCardsWidget extends StatelessWidget {
