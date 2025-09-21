@@ -20,28 +20,32 @@ class StoryListCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: CustomCardBacground(
-        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-        borderRadius: 12,
-        child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Image.asset(imagePath, fit: BoxFit.cover, width: double.infinity),
-
-              const Gap(12),
-
-              CustomText(
-                title,
-                fontSize: 18,
-                color: AppColors.textPrimary,
-                fontWeight: FontWeight.w700,
-                textAlign: TextAlign.center,
+      child: Column(
+        children: [
+          CustomCardBacground(
+            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+            borderRadius: 12,
+            child: Center(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.asset(
+                  imagePath,
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                ),
               ),
-            ],
+            ),
           ),
-        ),
+          const Gap(12),
+
+          CustomText(
+            title,
+            fontSize: 18,
+            color: AppColors.textPrimary,
+            fontWeight: FontWeight.w700,
+            textAlign: TextAlign.center,
+          ),
+        ],
       ),
     );
   }

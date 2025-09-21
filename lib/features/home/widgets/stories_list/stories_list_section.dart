@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:go_router/go_router.dart';
-import 'package:ico_story_app/core/constants/app_assets.dart';
 import 'package:ico_story_app/core/router/app_routes.dart';
 import 'package:ico_story_app/core/utils/context_extension.dart';
 import 'package:ico_story_app/features/home/data/story_list.dart';
@@ -17,22 +17,18 @@ class StoriesListSection extends StatelessWidget {
 
     final stories = StoryList.getStoriesForCategory(categoryTitle);
 
-    return GridView.builder(
+    return MasonryGridView.count(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-        maxCrossAxisExtent: 250,
-        mainAxisSpacing: 12,
-        crossAxisSpacing: 12,
-        mainAxisExtent: isTablet ? 250 : 220,
-      ),
-
+      crossAxisCount: isTablet ? 3 : 2, // عدد الأعمدة
+      mainAxisSpacing: 12,
+      crossAxisSpacing: 12,
       itemCount: stories.length,
       itemBuilder: (context, index) {
         final story = stories[index];
         return StoryListCard(
           title: story.title,
-          imagePath: AppAssets.icoLogo,
+          imagePath: story.coverImage,
           onTap: () {
             context.pushNamed(AppRoutes.storyReader, extra: story);
           },
