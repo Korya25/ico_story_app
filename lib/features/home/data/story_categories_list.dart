@@ -6,7 +6,7 @@ class StoryCategoriesList {
   static List<StoryCategoryModel> get categories => [
     StoryCategoryModel(
       id: AppConstant.char,
-      title: 'قصص حروف',
+      title: 'قصص الحروف',
       imagePath: AppAssets.charsStories,
     ),
     StoryCategoryModel(

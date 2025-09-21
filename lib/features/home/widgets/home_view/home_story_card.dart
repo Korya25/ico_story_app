@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
@@ -24,19 +26,36 @@ class HomeStoryCard extends StatelessWidget {
       child: Column(
         children: [
           // image card
-          Image.asset(imagePath, width: isTablet ? 250 : 0.18.sh),
-          Gap(8),
+          Container(
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey.shade300, width: 2),
+              borderRadius: BorderRadius.circular(8),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 4,
+                  offset: Offset(0, 2),
+                ),
+              ],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(6),
+              child: Image.asset(
+                imagePath,
+                width: isTablet ? 250 : 0.18.sh,
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+
+          Gap(12),
 
           // title
-          CustomCardBacground(
-            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-            borderRadius: 8,
-            child: CustomText(
-              title,
-              fontSize: isTablet ? 20 : 18,
-              color: AppColors.textPrimary,
-              fontWeight: FontWeight.w700,
-            ),
+          CustomText(
+            title,
+            fontSize: isTablet ? 20 : 18.h,
+            color: AppColors.textPrimary,
+            fontWeight: FontWeight.w700,
           ),
         ],
       ),

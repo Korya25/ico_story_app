@@ -21,12 +21,14 @@ class OnboardingModel {
 
   static final List<OnboardingModel> pages = [
     OnboardingModel(
-      title: "مرحبًا في ICO Stories!",
-      description: "استعد لمغامرة ممتعة مع القصص التعليمية للأطفال.",
-      imagePath: AppAssets.onboarding1,
+      title: "إنجاز تفتخر به",
+      description:
+          "حائزة على جائزة خليفة للإبداع التربوي على مستوى الوطن العربي",
+      imagePath: AppAssets.onboarding6,
       backgroundColor: AppColors.primary,
       iconColor: AppColors.accent,
     ),
+
     OnboardingModel(
       title: "تصفح القصص بسهولة",
       description: "اختر القصة المفضلة لديك وابدأ القراءة مباشرة.",
@@ -42,10 +44,9 @@ class OnboardingModel {
       iconColor: AppColors.primary,
     ),
     OnboardingModel(
-      title: "إنجاز تفتخر به",
-      description:
-          "حائزة على جائزة خليفة للإبداع التربوي على مستوى الوطن العربي",
-      imagePath: AppAssets.onboarding6,
+      title: "مرحبًا في ICO Stories!",
+      description: "استعد لمغامرة ممتعة مع القصص التعليمية للأطفال.",
+      imagePath: AppAssets.onboarding1,
       backgroundColor: AppColors.primary,
       iconColor: AppColors.accent,
     ),
