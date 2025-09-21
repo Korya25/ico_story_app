@@ -14,28 +14,30 @@ class HomeHeaderSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final isTablet = context.isTablet;
     return CustomCardBacground(
-      child: Column(
-        children: [
-          AppAnimations.pulse(
-            Image.asset(AppAssets.icoLogo, width: isTablet ? 200 : 100),
-          ),
-          Gap(isTablet ? 24 : 18),
-          CustomText(
-            '🌟 أهلاً  بك في عالم القصص الرائع! 🌟',
-            fontSize: isTablet ? 20 : 18,
-            fontWeight: FontWeight.w800,
-            color: AppColors.textPrimary,
-            textAlign: TextAlign.center,
-          ),
-          Gap(isTablet ? 16 : 8),
-          CustomText(
-            'اختر مجموعة القصص المفضلة لديك\n واستمتع بالمغامرة',
-            fontSize: isTablet ? 18 : 16,
-            color: AppColors.textPrimary,
-            textAlign: TextAlign.center,
-            fontWeight: FontWeight.w400,
-          ),
-        ],
+      child: Center(
+        child: Column(
+          children: [
+            AppAnimations.pulse(
+              Image.asset(AppAssets.icoLogo, width: isTablet ? 200 : 100),
+            ),
+            Gap(isTablet ? 24 : 18),
+            CustomText(
+              '🌟 أهلاً بك في عالم القصص 🌟',
+              fontSize: isTablet ? 20 : 18,
+              fontWeight: FontWeight.w800,
+              color: AppColors.textPrimary,
+              textAlign: TextAlign.center,
+            ),
+            Gap(isTablet ? 16 : 8),
+            CustomText(
+              'اختر مجموعة القصص المفضلة لديك\n واستمتع بالمغامرة',
+              fontSize: isTablet ? 18 : 16,
+              color: AppColors.textPrimary,
+              textAlign: TextAlign.center,
+              fontWeight: FontWeight.w400,
+            ),
+          ],
+        ),
       ),
     );
   }

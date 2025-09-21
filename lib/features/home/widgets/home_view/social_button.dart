@@ -16,39 +16,41 @@ class SocialButton extends StatelessWidget {
     return AppAnimations.bounceInUp(
       CustomCardBacground(
         padding: EdgeInsets.symmetric(vertical: 24),
-        child: Column(
-          children: [
-            CustomText(
-              ' تابعونا للمزيد من المتعة ',
-              fontSize: 18,
-              fontWeight: FontWeight.w800,
-              color: AppColors.textPrimary,
-              textAlign: TextAlign.center,
-            ),
-            Gap(24),
-            SocialMediaRow(
-              items: [
-                SocialMediaItem(
-                  platform: AppConstant.twitter,
-                  icon: AppAssets.x,
-                  url: AppConstant.twitterLink,
-                ),
-                SocialMediaItem(
-                  platform: AppConstant.insta,
-                  icon: AppAssets.insta,
-                  url: AppConstant.instaLink,
-                ),
-                SocialMediaItem(
-                  platform: AppConstant.facebook,
-                  icon: AppAssets.facebook,
-                  url: AppConstant.facebookLink,
-                ),
-              ],
-              onTap: (platform) {
-                debugPrint("Clicked on $platform");
-              },
-            ),
-          ],
+        child: Center(
+          child: Column(
+            children: [
+              CustomText(
+                ' تابعونا للمزيد من المتعة ',
+                fontSize: 18,
+                fontWeight: FontWeight.w800,
+                color: AppColors.textPrimary,
+                textAlign: TextAlign.center,
+              ),
+              Gap(24),
+              SocialMediaRow(
+                items: [
+                  SocialMediaItem(
+                    platform: AppConstant.twitter,
+                    icon: AppAssets.x,
+                    url: AppConstant.twitterLink,
+                  ),
+                  SocialMediaItem(
+                    platform: AppConstant.insta,
+                    icon: AppAssets.insta,
+                    url: AppConstant.instaLink,
+                  ),
+                  SocialMediaItem(
+                    platform: AppConstant.facebook,
+                    icon: AppAssets.facebook,
+                    url: AppConstant.facebookLink,
+                  ),
+                ],
+                onTap: (platform) {
+                  debugPrint("Clicked on $platform");
+                },
+              ),
+            ],
+          ),
         ),
       ),
       delay: Duration(milliseconds: 1500),
