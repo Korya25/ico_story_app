@@ -18,7 +18,7 @@ class CustomBackButton extends StatelessWidget {
       child: Icon(
         Icons.arrow_back_ios_new,
         color: AppColors.white,
-        size: isTablet ? 24 : 20,
+        size: isTablet ? 26 : 20,
       ),
     );
   }

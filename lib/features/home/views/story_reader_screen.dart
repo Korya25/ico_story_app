@@ -1,5 +1,4 @@
 // ignore_for_file: deprecated_member_use, avoid_print
-
 import 'package:flutter/material.dart';
 import 'package:ico_story_app/core/style/app_colors.dart';
 import 'package:ico_story_app/core/widgets/background_container.dart';
@@ -100,8 +99,7 @@ class _StoryReaderViewState extends State<StoryReaderView>
             // Header
             StoryReaderHeader(
               storyTitle: widget.story.title,
-              currentPage: _pdfManager.currentPage,
-              totalPages: _pdfManager.totalPages,
+
               onAudioToggle: () => setState(() {
                 _showAudioControls = !_showAudioControls;
               }),
