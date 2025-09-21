@@ -12,4 +12,5 @@ class AppColors {
 
   // Extended semantic colors
   static const Color textPrimary = Colors.white;
+  static const Color textSecondary = Colors.black;
 }

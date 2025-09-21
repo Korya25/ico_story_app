@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ico_story_app/core/router/app_routes.dart';
 import 'package:ico_story_app/core/style/app_colors.dart';
+import 'package:ico_story_app/core/widgets/animate_do.dart';
 import 'package:ico_story_app/core/widgets/background_container.dart';
 import 'package:ico_story_app/core/widgets/custom_text.dart';
 import 'package:ico_story_app/features/on_boreading/widgets/onboarding_bottom_navigation.dart';
@@ -55,16 +56,17 @@ class _OnboardingViewState extends State<OnboardingView> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (_currentPage < _pages.length - 1)
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: TextButton(
-                  onPressed: _skipToEnd,
-                  child: CustomText(
-                    "تخطي",
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.white,
-                    fontSize: 18,
-                    // 35
+              AppAnimations.shakeY(
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: GestureDetector(
+                    onTap: _skipToEnd,
+                    child: CustomText(
+                      "تخطي",
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.textPrimary,
+                      fontSize: 18,
+                    ),
                   ),
                 ),
               ),

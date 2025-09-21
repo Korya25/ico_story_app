@@ -1,5 +1,6 @@
 // ignore_for_file: deprecated_member_use
 import 'package:flutter/material.dart';
+import 'package:ico_story_app/core/style/app_colors.dart';
 import 'package:ico_story_app/core/widgets/custom_button.dart';
 
 class OnboardingBottomNavigation extends StatelessWidget {
@@ -45,8 +46,8 @@ class OnboardingBottomNavigation extends StatelessWidget {
           height: 8,
           decoration: BoxDecoration(
             color: currentPage == index
-                ? Colors.white
-                : Colors.white.withOpacity(0.4),
+                ? AppColors.white
+                : AppColors.white.withOpacity(0.4),
             borderRadius: BorderRadius.circular(4),
           ),
         ),

@@ -34,7 +34,6 @@ class CustomButton extends StatelessWidget {
     final isTablet = context.isTablet;
     final screenWidth = MediaQuery.of(context).size.width;
 
-    // لو مستخدم محدد عرض نستخدمه، غير كده نخلي الزرار responsive
     final effectiveWidth =
         width ??
         (isTablet
@@ -62,7 +61,7 @@ class CustomButton extends StatelessWidget {
                 fontSize: mobileFontSize,
                 tabletFontSize: tabletFontSize,
                 fontWeight: fontWeight,
-                color: Colors.black,
+                color: AppColors.textSecondary,
                 textAlign: TextAlign.center,
               ),
         ),
