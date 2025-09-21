@@ -9,13 +9,8 @@ import 'package:ico_story_app/core/widgets/custom_back_button.dart';
 import 'package:ico_story_app/core/widgets/custom_text.dart';
 
 class StoriesListHeader extends StatelessWidget {
-  const StoriesListHeader({
-    super.key,
-    required this.categoryTitle,
-    required this.storyCount,
-  });
+  const StoriesListHeader({super.key, required this.categoryTitle});
   final String categoryTitle;
-  final int storyCount;
 
   @override
   Widget build(BuildContext context) {
@@ -33,27 +28,12 @@ class StoriesListHeader extends StatelessWidget {
 
         // Category Info
         Expanded(
-          child: AppAnimations.fadeInDown(
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    CustomText(
-                      categoryTitle,
-                      fontSize: isTablet ? 24 : 20,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.white,
-                    ),
-                  ],
-                ),
-                Gap(isTablet ? 8 : 6),
-                CustomText(
-                  'عدد القصص : $storyCount',
-                  fontSize: isTablet ? 16 : 14,
-                  color: AppColors.white.withOpacity(0.9),
-                ),
-              ],
+          child: AppAnimations.fadeInLeft(
+            CustomText(
+              categoryTitle,
+              fontSize: isTablet ? 24 : 20,
+              fontWeight: FontWeight.bold,
+              color: AppColors.white,
             ),
             delay: Duration(milliseconds: 200),
           ),

@@ -8,7 +8,6 @@ import 'package:ico_story_app/core/utils/function.dart';
 import 'package:ico_story_app/features/home/widgets/stories_list/stories_list_header.dart';
 import 'package:ico_story_app/features/home/widgets/stories_list/stories_list_section.dart';
 
-// ===== STORIES LIST SCREEN =====
 class StoriesListView extends StatelessWidget {
   final String categoryTitle;
 
@@ -30,7 +29,6 @@ class StoriesListView extends StatelessWidget {
             SliverToBoxAdapter(
               child: StoriesListHeader(
                 categoryTitle: returnTitle(categoryTitle),
-                storyCount: 100000000000,
               ),
             ),
 
