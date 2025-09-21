@@ -11,13 +11,8 @@ import 'package:ico_story_app/features/home/widgets/stories_list/stories_list_se
 // ===== STORIES LIST SCREEN =====
 class StoriesListView extends StatelessWidget {
   final String categoryTitle;
-  final int storyCount;
 
-  const StoriesListView({
-    super.key,
-    required this.categoryTitle,
-    required this.storyCount,
-  });
+  const StoriesListView({super.key, required this.categoryTitle});
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +30,7 @@ class StoriesListView extends StatelessWidget {
             SliverToBoxAdapter(
               child: StoriesListHeader(
                 categoryTitle: returnTitle(categoryTitle),
-                storyCount: storyCount,
+                storyCount: 100000000000,
               ),
             ),
 

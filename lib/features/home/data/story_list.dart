@@ -232,4 +232,17 @@ class StoryList {
         return getTarbawiaStories;
     }
   }
+
+  static int getStoryCount(String id) {
+    switch (id) {
+      case AppConstant.char:
+        return StoryList.getTarChaStories.length;
+      case AppConstant.surah:
+        return StoryList.gettarSurahStories.length;
+      case AppConstant.tarbawia:
+        return StoryList.getTarbawiaStories.length;
+      default:
+        return 0;
+    }
+  }
 }

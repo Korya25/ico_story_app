@@ -42,14 +42,13 @@ class AppRouter {
           return AppTransitions.slideFromRight(
             context: context,
             state: state,
-
             child: StoriesListView(
               categoryTitle: extras?[AppConstant.categoryTitle],
-              storyCount: extras?[AppConstant.storyCount],
             ),
           );
         },
       ),
+
       GoRoute(
         path: AppRoutes.storyReader,
         name: AppRoutes.storyReader,

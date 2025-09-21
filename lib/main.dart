@@ -16,7 +16,7 @@ void main() async {
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
-  SharedPref().instantiatePreferences();
+  await SharedPref().instantiatePreferences();
   runApp(
     //DevicePreview(enabled: !kReleaseMode, builder: (context) => const MyApp()),
     MyApp(),

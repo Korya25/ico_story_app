@@ -1,11 +1,10 @@
-// ignore_for_file: deprecated_member_use
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:ico_story_app/core/constants/app_assets.dart';
 import 'package:ico_story_app/core/constants/app_constant.dart';
 import 'package:ico_story_app/core/router/app_routes.dart';
 import 'package:ico_story_app/core/widgets/animate_do.dart';
-import 'package:ico_story_app/features/home/models/story_list.dart';
+import 'package:ico_story_app/features/home/data/story_categories_list.dart';
+
 import 'package:ico_story_app/features/home/widgets/home_view/home_story_card.dart';
 
 class StoriesCardsWidget extends StatelessWidget {
@@ -13,6 +12,7 @@ class StoriesCardsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    List categories = StoryCategoriesList.categories;
     return Column(
       spacing: 24,
       mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -20,55 +20,45 @@ class StoriesCardsWidget extends StatelessWidget {
         Row(
           spacing: 16,
           mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            AppAnimations.bounceInRight(
-              delay: Duration(milliseconds: 1000),
-              HomeStoryCard(
-                onTap: () => context.pushNamed(
-                  AppRoutes.storiesList,
-                  extra: {
-                    AppConstant.categoryTitle: AppConstant.char,
-                    AppConstant.storyCount: StoryList.getTarChaStories.length,
-                  },
-                ),
-                imagePath: AppAssets.charsStories,
-                title: 'قصص حروف',
-              ),
-            ),
-            AppAnimations.bounceInLeft(
-              delay: Duration(milliseconds: 1000),
+          children: categories.take(2).toList().asMap().entries.map((entry) {
+            final index = entry.key;
+            final category = entry.value;
 
-              HomeStoryCard(
-                imagePath: AppAssets.serahStories,
-                title: 'قصص سيرة',
-                onTap: () => context.pushNamed(
-                  AppRoutes.storiesList,
-
-                  extra: {
-                    AppConstant.categoryTitle: AppConstant.surah,
-                    AppConstant.storyCount: StoryList.gettarSurahStories.length,
-                  },
-                ),
-              ),
-            ),
-
-            //
-          ],
+            return index == 0
+                ? AppAnimations.bounceInRight(
+                    HomeStoryCard(
+                      imagePath: category.imagePath,
+                      title: category.title,
+                      onTap: () => context.pushNamed(
+                        AppRoutes.storiesList,
+                        extra: {AppConstant.categoryTitle: category.id},
+                      ),
+                    ),
+                    delay: const Duration(milliseconds: 1000),
+                  )
+                : AppAnimations.bounceInLeft(
+                    HomeStoryCard(
+                      imagePath: category.imagePath,
+                      title: category.title,
+                      onTap: () => context.pushNamed(
+                        AppRoutes.storiesList,
+                        extra: {AppConstant.categoryTitle: category.id},
+                      ),
+                    ),
+                    delay: const Duration(milliseconds: 1000),
+                  );
+          }).toList(),
         ),
         AppAnimations.bounceInUp(
-          delay: Duration(milliseconds: 1300),
-
           HomeStoryCard(
-            imagePath: AppAssets.knoozStories,
-            title: 'كنوز المعرفة',
+            imagePath: categories[2].imagePath,
+            title: categories[2].title,
             onTap: () => context.pushNamed(
               AppRoutes.storiesList,
-              extra: {
-                AppConstant.categoryTitle: AppConstant.tarbawia,
-                AppConstant.storyCount: StoryList.getTarbawiaStories.length,
-              },
+              extra: {AppConstant.categoryTitle: categories[2].id},
             ),
           ),
+          delay: const Duration(milliseconds: 1300),
         ),
       ],
     );
