@@ -10,7 +10,6 @@ import 'package:ico_story_app/features/home/widgets/story_reader/audio_controls.
 import 'package:ico_story_app/features/home/widgets/story_reader/managers/audio_manager.dart';
 import 'package:ico_story_app/features/home/widgets/story_reader/managers/pdf_manager.dart';
 
-// ===== MAIN STORY READER SCREEN =====
 class StoryReaderView extends StatefulWidget {
   final StoryModel story;
 
