@@ -2,6 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ico_story_app/core/router/app_routes.dart';
+import 'package:ico_story_app/core/services/pref_keys.dart';
+import 'package:ico_story_app/core/services/shared_pref.dart';
 import 'package:ico_story_app/core/style/app_colors.dart';
 import 'package:ico_story_app/core/widgets/animate_do.dart';
 import 'package:ico_story_app/core/widgets/background_container.dart';
@@ -43,6 +45,7 @@ class _OnboardingViewState extends State<OnboardingView> {
 
   void _navigateToHome() {
     context.goNamed(AppRoutes.home);
+    SharedPref().setBoolean(PrefKeys.showOnboarding, true);
   }
 
   @override

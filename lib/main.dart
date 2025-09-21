@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ico_story_app/core/router/app_router.dart';
+import 'package:ico_story_app/core/services/shared_pref.dart';
 import 'package:ico_story_app/core/style/app_theme.dart';
 
 void main() async {
@@ -15,6 +16,7 @@ void main() async {
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
+  SharedPref().instantiatePreferences();
   runApp(
     //DevicePreview(enabled: !kReleaseMode, builder: (context) => const MyApp()),
     MyApp(),
