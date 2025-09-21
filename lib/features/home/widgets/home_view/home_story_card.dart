@@ -4,6 +4,7 @@ import 'package:gap/gap.dart';
 import 'package:ico_story_app/core/style/app_colors.dart';
 import 'package:ico_story_app/core/utils/context_extension.dart';
 import 'package:ico_story_app/core/widgets/custom_text.dart';
+import 'package:ico_story_app/features/home/widgets/common/custom_card_bacground.dart';
 
 class HomeStoryCard extends StatelessWidget {
   const HomeStoryCard({
@@ -27,11 +28,15 @@ class HomeStoryCard extends StatelessWidget {
           Gap(8),
 
           // title
-          CustomText(
-            title,
-            fontSize: isTablet ? 20 : 18,
-            color: AppColors.white,
-            fontWeight: FontWeight.w700,
+          CustomCardBacground(
+            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+            borderRadius: 8,
+            child: CustomText(
+              title,
+              fontSize: isTablet ? 20 : 18,
+              color: AppColors.textPrimary,
+              fontWeight: FontWeight.w700,
+            ),
           ),
         ],
       ),
