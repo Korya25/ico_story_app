@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ico_story_app/features/on_boreading/widgets/onboarding_widget.dart';
+import 'package:ico_story_app/features/onboarding/widgets/onboarding_widget.dart';
 
 class OnboardingPageView extends StatelessWidget {
   final PageController controller;
@@ -24,7 +24,10 @@ class OnboardingPageView extends StatelessWidget {
       onPageChanged: onPageChanged,
       itemCount: pages.length,
       itemBuilder: (context, index) {
-        return OnboardinWidget(page: pages[index], animationDelay: index * 200);
+        return OnboardingWidget(
+          page: pages[index],
+          animationDelay: index * 200,
+        );
       },
     );
   }

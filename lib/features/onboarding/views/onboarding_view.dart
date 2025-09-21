@@ -6,9 +6,9 @@ import 'package:ico_story_app/core/style/app_colors.dart';
 import 'package:ico_story_app/core/widgets/animate_do.dart';
 import 'package:ico_story_app/core/widgets/background_container.dart';
 import 'package:ico_story_app/core/widgets/custom_text.dart';
-import 'package:ico_story_app/features/on_boreading/widgets/onboarding_bottom_navigation.dart';
-import 'package:ico_story_app/features/on_boreading/widgets/onboarding_page_view.dart';
-import 'package:ico_story_app/features/on_boreading/model/onboarding_model.dart';
+import 'package:ico_story_app/features/onboarding/widgets/onboarding_bottom_navigation.dart';
+import 'package:ico_story_app/features/onboarding/widgets/onboarding_page_view.dart';
+import 'package:ico_story_app/features/onboarding/model/onboarding_model.dart';
 
 class OnboardingView extends StatefulWidget {
   const OnboardingView({super.key});
