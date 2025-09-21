@@ -157,16 +157,16 @@ class _AudioControlsState extends State<AudioControls>
         const Gap(12),
         Expanded(
           child: CustomText(
-            'Audio Story',
+            'صوت القصة',
             fontSize: isTablet ? 18 : 16,
-            color: Colors.white,
-            fontWeight: FontWeight.w600,
+            color: AppColors.textPrimary,
+            fontWeight: FontWeight.w400,
           ),
         ),
         // Volume Indicator
         Icon(
           widget.audioManager.isPlaying ? Icons.volume_up : Icons.volume_off,
-          color: Colors.white.withOpacity(0.8),
+          color: AppColors.textPrimary.withOpacity(0.8),
           size: isTablet ? 22 : 20,
         ),
       ],

@@ -109,6 +109,7 @@ class _StoryReaderViewState extends State<StoryReaderView>
             Expanded(
               child: Container(
                 margin: EdgeInsets.all(0),
+
                 color: AppColors.cardBackground,
                 child: Stack(
                   children: [
@@ -130,7 +131,7 @@ class _StoryReaderViewState extends State<StoryReaderView>
                         bottom: 0,
                         child: AudioControls(
                           audioManager: _audioManager,
-                          categoryColor: AppColors.textPrimary,
+                          categoryColor: AppColors.soundBackground,
                         ),
                       ),
                   ],
