@@ -32,7 +32,7 @@ class _StoryReaderViewState extends State<StoryReaderView>
   // State
   bool _showAudioControls = false;
   final bool _pageFitCover = false;
-  final double _pageScale = 0.98;
+  final double _pageScale = 1;
   final Alignment _pageAlignment = Alignment.center;
   @override
   void initState() {
