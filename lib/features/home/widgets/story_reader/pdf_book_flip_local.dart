@@ -1,6 +1,7 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:ico_story_app/core/style/app_colors.dart';
 import 'package:page_flip/page_flip.dart';
 import 'package:pdfx/pdfx.dart';
@@ -13,6 +14,7 @@ class PdfBookFlipLocal extends StatefulWidget {
     this.scale = 1.0,
     this.alignment = Alignment.center,
   });
+
   final String pdfPath;
   final bool fitCover;
   final double scale;
@@ -29,7 +31,16 @@ class _PdfBookFlipLocalState extends State<PdfBookFlipLocal> {
   @override
   void initState() {
     super.initState();
+    // إخفاء status bar و navigation bar للشاشة الكاملة
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
     _loadPages();
+  }
+
+  @override
+  void dispose() {
+    // إرجاع النظام إلى الوضع الطبيعي عند الخروج
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    super.dispose();
   }
 
   Future<void> _loadPages() async {
@@ -62,53 +73,57 @@ class _PdfBookFlipLocalState extends State<PdfBookFlipLocal> {
       );
     }
 
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final width = constraints.maxWidth;
-        final height = constraints.maxHeight;
-
-        final fit = widget.fitCover ? BoxFit.cover : BoxFit.contain;
-        final scaledWidth = width * widget.scale;
-        final scaledHeight = height * widget.scale;
-
-        final fullBleedPages = pages.map((img) {
-          return SizedBox.expand(
-            child: Stack(
-              children: [
-                FittedBox(
-                  fit: fit,
-                  alignment: widget.alignment,
-                  child: SizedBox(
-                    width: scaledWidth,
-                    height: scaledHeight,
-                    child: img,
-                  ),
-                ),
-                Positioned(
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  child: Container(
-                    height: 20,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          AppColors.primary.withOpacity(0.85),
-                          AppColors.primary.withOpacity(0.0),
-                        ],
+    return Scaffold(
+      body: SafeArea(
+        top: false,
+        bottom: false,
+        left: false,
+        right: false,
+        child: SizedBox.expand(
+          child: PageFlipWidget(
+            key: _controller,
+            children: pages.map((img) {
+              return SizedBox(
+                width: double.infinity,
+                height: double.infinity,
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    // الصورة بملء الشاشة الكامل
+                    Positioned.fill(
+                      child: Image(
+                        image: img.image,
+                        fit: BoxFit
+                            .cover, // أو BoxFit.fill لملء كامل بدون احتفاظ بنسبة العرض للارتفاع
+                        alignment: widget.alignment,
                       ),
                     ),
-                  ),
+                    // الـ gradient العلوي (اختياري - يمكن إزالته)
+                    Positioned(
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      child: Container(
+                        height: 20,
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              AppColors.primary.withOpacity(0.85),
+                              AppColors.primary.withOpacity(0.0),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          );
-        }).toList();
-
-        return PageFlipWidget(key: _controller, children: fullBleedPages);
-      },
+              );
+            }).toList(),
+          ),
+        ),
+      ),
     );
   }
 }

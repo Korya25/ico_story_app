@@ -10,14 +10,14 @@ class StoryCategoriesList {
       imagePath: AppAssets.charsStories,
     ),
     StoryCategoryModel(
-      id: AppConstant.surah,
-      title: 'قصص سيرة',
-      imagePath: AppAssets.serahStories,
-    ),
-    StoryCategoryModel(
       id: AppConstant.tarbawia,
       title: 'كنوز القيم',
       imagePath: AppAssets.knoozStories,
+    ),
+    StoryCategoryModel(
+      id: AppConstant.surah,
+      title: 'قصص سيرة',
+      imagePath: AppAssets.serahStories,
     ),
   ];
 }

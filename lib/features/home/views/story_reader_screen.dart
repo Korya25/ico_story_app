@@ -108,8 +108,6 @@ class _StoryReaderViewState extends State<StoryReaderView>
             // Main Content Area
             Expanded(
               child: Container(
-                margin: EdgeInsets.all(0),
-
                 color: AppColors.cardBackground,
                 child: Stack(
                   children: [
