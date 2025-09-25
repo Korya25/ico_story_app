@@ -74,54 +74,48 @@ class _PdfBookFlipLocalState extends State<PdfBookFlipLocal> {
     }
 
     return Scaffold(
-      body: SafeArea(
-        top: false,
-        bottom: false,
-        left: false,
-        right: false,
-        child: SizedBox.expand(
-          child: PageFlipWidget(
-            key: _controller,
-            children: pages.map((img) {
-              return SizedBox(
-                width: double.infinity,
-                height: double.infinity,
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    // الصورة بملء الشاشة الكامل
-                    Positioned.fill(
-                      child: Image(
-                        image: img.image,
-                        fit: BoxFit
-                            .cover, // أو BoxFit.fill لملء كامل بدون احتفاظ بنسبة العرض للارتفاع
-                        alignment: widget.alignment,
-                      ),
+      body: SizedBox.expand(
+        child: PageFlipWidget(
+          key: _controller,
+          children: pages.map((img) {
+            return SizedBox(
+              width: double.infinity,
+              height: double.infinity,
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  // الصورة بملء الشاشة الكامل
+                  Positioned.fill(
+                    child: Image(
+                      image: img.image,
+                      fit: BoxFit
+                          .cover, // أو BoxFit.fill لملء كامل بدون احتفاظ بنسبة العرض للارتفاع
+                      alignment: widget.alignment,
                     ),
-                    // الـ gradient العلوي (اختياري - يمكن إزالته)
-                    Positioned(
-                      top: 0,
-                      left: 0,
-                      right: 0,
-                      child: Container(
-                        height: 20,
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [
-                              AppColors.primary.withOpacity(0.85),
-                              AppColors.primary.withOpacity(0.0),
-                            ],
-                          ),
+                  ),
+                  // الـ gradient العلوي (اختياري - يمكن إزالته)
+                  Positioned(
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    child: Container(
+                      height: 20,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            AppColors.primary.withOpacity(0.85),
+                            AppColors.primary.withOpacity(0.0),
+                          ],
                         ),
                       ),
                     ),
-                  ],
-                ),
-              );
-            }).toList(),
-          ),
+                  ),
+                ],
+              ),
+            );
+          }).toList(),
         ),
       ),
     );

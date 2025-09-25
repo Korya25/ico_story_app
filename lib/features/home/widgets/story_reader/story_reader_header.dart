@@ -53,16 +53,28 @@ class StoryReaderHeader extends StatelessWidget {
             ),
 
             // Audio Status - Big and Clear
-            AppAnimations.fadeInLeft(
-              delay: Duration(milliseconds: 350),
-              CustomIconBackground(
-                onTap: onAudioToggle,
-                child: Icon(
-                  Icons.volume_up,
+            Row(
+              children: [
+                CustomText(
+                  "استمع إلى القصة",
+                  fontSize: isTablet ? 14 : 12,
+                  fontWeight: FontWeight.w600,
                   color: AppColors.textPrimary,
-                  size: isTablet ? 26 : 22,
                 ),
-              ),
+
+                Gap(isTablet ? 16 : 12),
+                AppAnimations.fadeInLeft(
+                  delay: Duration(milliseconds: 350),
+                  CustomIconBackground(
+                    onTap: onAudioToggle,
+                    child: Icon(
+                      Icons.volume_up,
+                      color: AppColors.textPrimary,
+                      size: isTablet ? 26 : 22,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
         ),
