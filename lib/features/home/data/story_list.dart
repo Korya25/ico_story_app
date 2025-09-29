@@ -48,8 +48,8 @@ class StoryList {
     StoryModel(
       id: '7',
       title: 'احترام الكبير',
-      pdfPath: 'assets/pdf/tarbawia/ehtaram_el_kabeer.pdf',
-      audioPath: 'audio/tarbawia/ehtaram_el_kabeer.mp3',
+      pdfPath: 'assets/pdf/tarbawia/ehteram_el_kabeer.pdf',
+      audioPath: 'audio/tarbawia/ehteram_el_kabeer.mp3',
       coverImage: 'assets/images/tarbawia_image/16-ehteram-el-kabeer.webp',
     ),
     StoryModel(
