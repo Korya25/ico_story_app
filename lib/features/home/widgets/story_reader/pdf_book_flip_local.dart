@@ -10,14 +10,10 @@ class PdfBookFlipLocal extends StatefulWidget {
   const PdfBookFlipLocal({
     super.key,
     required this.pdfPath,
-    this.fitCover = true,
-    this.scale = 1.0,
     this.alignment = Alignment.center,
   });
 
   final String pdfPath;
-  final bool fitCover;
-  final double scale;
   final Alignment alignment;
 
   @override
@@ -31,14 +27,12 @@ class _PdfBookFlipLocalState extends State<PdfBookFlipLocal> {
   @override
   void initState() {
     super.initState();
-    // إخفاء status bar و navigation bar للشاشة الكاملة
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
     _loadPages();
   }
 
   @override
   void dispose() {
-    // إرجاع النظام إلى الوضع الطبيعي عند الخروج
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     super.dispose();
   }
@@ -84,16 +78,13 @@ class _PdfBookFlipLocalState extends State<PdfBookFlipLocal> {
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  // الصورة بملء الشاشة الكامل
                   Positioned.fill(
                     child: Image(
                       image: img.image,
-                      fit: BoxFit
-                          .cover, // أو BoxFit.fill لملء كامل بدون احتفاظ بنسبة العرض للارتفاع
+                      fit: BoxFit.cover,
                       alignment: widget.alignment,
                     ),
                   ),
-                  // الـ gradient العلوي (اختياري - يمكن إزالته)
                   Positioned(
                     top: 0,
                     left: 0,

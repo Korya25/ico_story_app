@@ -31,8 +31,6 @@ class _StoryReaderViewState extends State<StoryReaderView>
 
   // State
   bool _showAudioControls = false;
-  final bool _pageFitCover = false;
-  final double _pageScale = 1;
   final Alignment _pageAlignment = Alignment.center;
   @override
   void initState() {
@@ -114,8 +112,6 @@ class _StoryReaderViewState extends State<StoryReaderView>
                     // PDF Viewer - Main Content (fills available space)
                     Positioned.fill(
                       child: PdfBookFlipLocal(
-                        fitCover: _pageFitCover,
-                        scale: _pageScale,
                         alignment: _pageAlignment,
                         pdfPath: widget.story.pdfPath,
                       ),
