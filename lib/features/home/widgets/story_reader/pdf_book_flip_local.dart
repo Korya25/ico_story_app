@@ -44,8 +44,8 @@ class _PdfBookFlipLocalState extends State<PdfBookFlipLocal> {
       final page = await doc.getPage(i);
 
       final pageImage = await page.render(
-        width: page.width,
-        height: page.height,
+        width: page.width * 2, // زيادة الجودة
+        height: page.height * 2,
         format: PdfPageImageFormat.png,
       );
 
@@ -72,39 +72,53 @@ class _PdfBookFlipLocalState extends State<PdfBookFlipLocal> {
         child: PageFlipWidget(
           key: _controller,
           children: pages.map((img) {
-            return SizedBox(
-              width: double.infinity,
-              height: double.infinity,
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  Positioned.fill(
-                    child: Image(
-                      image: img.image,
-                      fit: BoxFit.cover,
-                      alignment: widget.alignment,
-                    ),
-                  ),
-                  Positioned(
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    child: Container(
-                      height: 20,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            AppColors.primary.withOpacity(0.85),
-                            AppColors.primary.withOpacity(0.0),
-                          ],
+            return LayoutBuilder(
+              builder: (context, constraints) {
+                final screenWidth = constraints.maxWidth;
+                final screenHeight = constraints.maxHeight;
+                final isTablet = screenWidth >= 600;
+
+                return Container(
+                  width: double.infinity,
+                  height: double.infinity,
+                  color: AppColors.cardBackground,
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      // PDF Content يمتد ويتكيف مع كل شاشة
+                      Image(
+                        image: img.image,
+                        fit: BoxFit.fill, // يمتد ويملأ الشاشة بدون حواف
+                        width: double.infinity,
+                        height: double.infinity,
+                        alignment: widget.alignment,
+                      ),
+
+                      // Gradient overlay للجمالية فقط
+                      Positioned(
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        child: IgnorePointer(
+                          child: Container(
+                            height: 20,
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                                  AppColors.primary.withOpacity(0.3),
+                                  AppColors.primary.withOpacity(0.0),
+                                ],
+                              ),
+                            ),
+                          ),
                         ),
                       ),
-                    ),
+                    ],
                   ),
-                ],
-              ),
+                );
+              },
             );
           }).toList(),
         ),
