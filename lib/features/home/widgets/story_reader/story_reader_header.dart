@@ -11,12 +11,16 @@ import 'package:ico_story_app/core/widgets/custom_text.dart';
 
 class StoryReaderHeader extends StatelessWidget {
   final String storyTitle;
-  final VoidCallback onAudioToggle;
+  final String? storyType;
+  final VoidCallback? onAudioToggle;
+  final bool isAudioVisible;
 
   const StoryReaderHeader({
     super.key,
     required this.storyTitle,
-    required this.onAudioToggle,
+    this.onAudioToggle,
+    this.storyType,
+    this.isAudioVisible = false,
   });
 
   @override
@@ -53,29 +57,32 @@ class StoryReaderHeader extends StatelessWidget {
             ),
 
             // Audio Status - Big and Clear
-            Row(
-              children: [
-                CustomText(
-                  "استمع إلى القصة",
-                  fontSize: isTablet ? 14 : 12,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.textPrimary,
-                ),
+            if (storyType != null && storyType!.isNotEmpty)
+              Row(
+                children: [
+                  CustomText(
+                    "استمع إلى $storyType",
+                    fontSize: isTablet ? 14 : 12,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textPrimary,
+                  ),
 
-                Gap(isTablet ? 16 : 12),
-                AppAnimations.fadeInLeft(
-                  delay: Duration(milliseconds: 350),
-                  CustomIconBackground(
-                    onTap: onAudioToggle,
-                    child: Icon(
-                      Icons.volume_up,
-                      color: AppColors.textPrimary,
-                      size: isTablet ? 26 : 22,
+                  Gap(isTablet ? 16 : 12),
+                  AppAnimations.fadeInLeft(
+                    delay: Duration(milliseconds: 350),
+                    CustomIconBackground(
+                      onTap: onAudioToggle,
+                      child: Icon(
+                        isAudioVisible ? Icons.close : Icons.volume_up,
+                        color: isAudioVisible
+                            ? Colors.red
+                            : AppColors.textPrimary,
+                        size: isTablet ? 26 : 22,
+                      ),
                     ),
                   ),
-                ),
-              ],
-            ),
+                ],
+              ),
           ],
         ),
       ),

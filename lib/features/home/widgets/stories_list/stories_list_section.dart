@@ -20,7 +20,7 @@ class StoriesListSection extends StatelessWidget {
     return MasonryGridView.count(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      crossAxisCount: isTablet ? 3 : 2, // عدد الأعمدة
+      crossAxisCount: isTablet ? 3 : 2,
       mainAxisSpacing: 12,
       crossAxisSpacing: 12,
       itemCount: stories.length,
@@ -30,7 +30,10 @@ class StoriesListSection extends StatelessWidget {
           title: story.title,
           imagePath: story.coverImage,
           onTap: () {
-            context.pushNamed(AppRoutes.storyReader, extra: story);
+            context.pushNamed(
+              AppRoutes.storyReader,
+              extra: {'story': story, 'categoryId': categoryTitle},
+            );
           },
         );
       },

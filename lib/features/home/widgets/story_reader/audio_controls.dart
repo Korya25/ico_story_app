@@ -155,14 +155,7 @@ class _AudioControlsState extends State<AudioControls>
           },
         ),
         const Gap(12),
-        Expanded(
-          child: CustomText(
-            'صوت القصة',
-            fontSize: isTablet ? 18 : 16,
-            color: AppColors.textPrimary,
-            fontWeight: FontWeight.w400,
-          ),
-        ),
+        Spacer(),
         // Volume Indicator
         Icon(
           widget.audioManager.isPlaying ? Icons.volume_up : Icons.volume_off,
@@ -202,7 +195,7 @@ class _AudioControlsState extends State<AudioControls>
                   : widget.audioManager.currentPosition,
             ),
             isTablet,
-            'Current',
+            'الحالي',
           ),
           Container(
             padding: EdgeInsets.symmetric(
@@ -222,7 +215,7 @@ class _AudioControlsState extends State<AudioControls>
           _buildTimeText(
             _formatDuration(widget.audioManager.totalDuration),
             isTablet,
-            'Total',
+            'الاجمالي',
           ),
         ],
       ),

@@ -1,6 +1,7 @@
 // ignore_for_file: deprecated_member_use, avoid_print
 import 'package:flutter/material.dart';
 import 'package:ico_story_app/core/style/app_colors.dart';
+import 'package:ico_story_app/core/constants/app_constant.dart';
 import 'package:ico_story_app/core/widgets/background_container.dart';
 import 'package:ico_story_app/features/home/models/story_model.dart';
 import 'package:ico_story_app/features/home/widgets/story_reader/story_reader_header.dart';
@@ -11,8 +12,9 @@ import 'package:ico_story_app/features/home/widgets/story_reader/managers/pdf_ma
 
 class StoryReaderView extends StatefulWidget {
   final StoryModel story;
+  final String? categoryId;
 
-  const StoryReaderView({super.key, required this.story});
+  const StoryReaderView({super.key, required this.story, this.categoryId});
 
   @override
   State<StoryReaderView> createState() => _StoryReaderViewState();
@@ -21,7 +23,7 @@ class StoryReaderView extends StatefulWidget {
 class _StoryReaderViewState extends State<StoryReaderView>
     with TickerProviderStateMixin, WidgetsBindingObserver {
   // Audio Manager
-  late AudioManager _audioManager;
+  AudioManager? _audioManager;
 
   // PDF Manager
   late PDFManager _pdfManager;
@@ -32,6 +34,14 @@ class _StoryReaderViewState extends State<StoryReaderView>
   // State
   bool _showAudioControls = false;
   final Alignment _pageAlignment = Alignment.center;
+  bool get _isSurah => widget.categoryId == AppConstant.surah;
+  String? get _storyTypeLabel {
+    if (_isSurah) return null;
+    if (widget.categoryId == AppConstant.tarbawia) return 'الأنشودة';
+    if (widget.categoryId == AppConstant.char) return 'القصة';
+    return null;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -41,12 +51,15 @@ class _StoryReaderViewState extends State<StoryReaderView>
   }
 
   void _initializeManagers() {
-    _audioManager = AudioManager(
-      audioAssetPath: widget.story.audioPath,
-      onStateChanged: () {
-        if (mounted) setState(() {});
-      },
-    );
+    if (!_isSurah) {
+      _audioManager = AudioManager(
+        audioAssetPath: widget.story.audioPath,
+        onStateChanged: () {
+          if (mounted) setState(() {});
+        },
+      );
+      _audioManager!.initialize();
+    }
 
     _pdfManager = PDFManager(
       pdfAssetPath: widget.story.pdfPath,
@@ -55,8 +68,6 @@ class _StoryReaderViewState extends State<StoryReaderView>
         if (mounted) setState(() {});
       },
     );
-
-    _audioManager.initialize();
     _pdfManager.initialize();
   }
 
@@ -69,7 +80,7 @@ class _StoryReaderViewState extends State<StoryReaderView>
 
   @override
   void dispose() {
-    _audioManager.dispose();
+    _audioManager?.dispose();
     _pdfManager.dispose();
     _waveController.dispose();
     WidgetsBinding.instance.removeObserver(this);
@@ -81,7 +92,7 @@ class _StoryReaderViewState extends State<StoryReaderView>
     if (state == AppLifecycleState.inactive ||
         state == AppLifecycleState.paused ||
         state == AppLifecycleState.detached) {
-      _audioManager.handleAppLifecyclePause();
+      _audioManager?.handleAppLifecyclePause();
     }
     super.didChangeAppLifecycleState(state);
   }
@@ -97,10 +108,13 @@ class _StoryReaderViewState extends State<StoryReaderView>
             // Header
             StoryReaderHeader(
               storyTitle: widget.story.title,
-
-              onAudioToggle: () => setState(() {
-                _showAudioControls = !_showAudioControls;
-              }),
+              onAudioToggle: _isSurah
+                  ? null
+                  : () => setState(() {
+                      _showAudioControls = !_showAudioControls;
+                    }),
+              storyType: _storyTypeLabel,
+              isAudioVisible: _showAudioControls && !_isSurah,
             ),
 
             // Main Content Area
@@ -118,13 +132,15 @@ class _StoryReaderViewState extends State<StoryReaderView>
                     ),
 
                     // Audio Controls overlay (does not affect layout)
-                    if (_showAudioControls)
+                    if (_showAudioControls &&
+                        !_isSurah &&
+                        _audioManager != null)
                       Positioned(
                         left: 0,
                         right: 0,
                         bottom: 0,
                         child: AudioControls(
-                          audioManager: _audioManager,
+                          audioManager: _audioManager!,
                           categoryColor: AppColors.soundBackground,
                         ),
                       ),

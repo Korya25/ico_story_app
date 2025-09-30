@@ -53,12 +53,14 @@ class AppRouter {
         path: AppRoutes.storyReader,
         name: AppRoutes.storyReader,
         pageBuilder: (context, state) {
-          final story = state.extra as StoryModel;
+          final extras = state.extra as Map<String, dynamic>;
+          final story = extras['story'] as StoryModel;
+          final categoryId = extras['categoryId'] as String?;
 
           return AppTransitions.slideFromRight(
             context: context,
             state: state,
-            child: StoryReaderView(story: story),
+            child: StoryReaderView(story: story, categoryId: categoryId),
           );
         },
       ),
