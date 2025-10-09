@@ -220,7 +220,22 @@ class StoryList {
     ),
   ];
 
-  static List<StoryModel> gettarSurahStories = [];
+  static List<StoryModel> gettarSurahStories = [
+    StoryModel(
+      id: '1',
+      title: 'البحار وطائر الرخ',
+      pdfPath: 'assets/pdf/char/Albahar_Wa_Tair_alrukh.pdf',
+      audioPath: 'audio/char/Albahar_Wa_Tair_alrukh.mp3',
+      coverImage: 'assets/images/char_image/15-Albahar-Wa-Tair-alrukh.webp',
+    ),
+    StoryModel(
+      id: '2',
+      title: 'السندباد',
+      pdfPath: 'assets/pdf/char/Sindibad.pdf',
+      audioPath: 'audio/char/Sindibad.mp3',
+      coverImage: 'assets/images/char_image/12-Sindibad.webp',
+    ),
+  ];
 
   static List<StoryModel> getStoriesForCategory(String categoryTitle) {
     switch (categoryTitle) {
