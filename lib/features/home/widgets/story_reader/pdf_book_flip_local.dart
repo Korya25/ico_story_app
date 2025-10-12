@@ -44,9 +44,9 @@ class _PdfBookFlipLocalState extends State<PdfBookFlipLocal> {
       final page = await doc.getPage(i);
 
       final pageImage = await page.render(
-        width: page.width * 2, // زيادة الجودة
+        width: page.width * 0.7,
         height: page.height * 2,
-        format: PdfPageImageFormat.png,
+        format: PdfPageImageFormat.jpeg,
       );
 
       if (pageImage != null) {
@@ -69,53 +69,63 @@ class _PdfBookFlipLocalState extends State<PdfBookFlipLocal> {
 
     return Scaffold(
       body: SizedBox.expand(
-        child: PageFlipWidget(
-          key: _controller,
-          children: pages.map((img) {
-            return LayoutBuilder(
-              builder: (context, constraints) {
-                return Container(
-                  width: double.infinity,
-                  height: double.infinity,
-                  color: AppColors.cardBackground,
-                  child: Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      Image(
-                        image: img.image,
-                        fit: BoxFit.fill,
-                        width: double.infinity,
-                        height: double.infinity,
-                        alignment: widget.alignment,
-                      ),
-
-                      // Gradient overlay للجمالية فقط
-                      Positioned(
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        child: IgnorePointer(
-                          child: Container(
-                            height: 20,
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: [
-                                  AppColors.primary.withOpacity(0.3),
-                                  AppColors.primary.withOpacity(0.0),
-                                ],
+        child: Transform(
+          alignment: Alignment.center,
+          transform: Matrix4.rotationY(
+            3.141592653589793,
+          ), // عكس الاتجاه بالكامل
+          child: PageFlipWidget(
+            key: _controller,
+            children: pages.map((img) {
+              return Transform(
+                alignment: Alignment.center,
+                transform: Matrix4.rotationY(
+                  3.141592653589793,
+                ), // نرجع الصورة طبيعية
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    return Container(
+                      width: double.infinity,
+                      height: double.infinity,
+                      color: AppColors.cardBackground,
+                      child: Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          Image(
+                            image: img.image,
+                            fit: BoxFit.fill,
+                            width: double.infinity,
+                            height: double.infinity,
+                            alignment: widget.alignment,
+                          ),
+                          Positioned(
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            child: IgnorePointer(
+                              child: Container(
+                                height: 20,
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter,
+                                    colors: [
+                                      AppColors.primary.withOpacity(0.3),
+                                      AppColors.primary.withOpacity(0.0),
+                                    ],
+                                  ),
+                                ),
                               ),
                             ),
                           ),
-                        ),
+                        ],
                       ),
-                    ],
-                  ),
-                );
-              },
-            );
-          }).toList(),
+                    );
+                  },
+                ),
+              );
+            }).toList(),
+          ),
         ),
       ),
     );
