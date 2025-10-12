@@ -20,7 +20,7 @@ class StoriesListSection extends StatelessWidget {
     return MasonryGridView.count(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      crossAxisCount: isTablet ? 3 : 2,
+      crossAxisCount: isTablet ? 2 : 2,
       mainAxisSpacing: 12,
       crossAxisSpacing: 12,
       itemCount: stories.length,

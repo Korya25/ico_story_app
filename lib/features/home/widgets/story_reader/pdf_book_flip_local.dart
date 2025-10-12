@@ -74,10 +74,6 @@ class _PdfBookFlipLocalState extends State<PdfBookFlipLocal> {
           children: pages.map((img) {
             return LayoutBuilder(
               builder: (context, constraints) {
-                final screenWidth = constraints.maxWidth;
-                final screenHeight = constraints.maxHeight;
-                final isTablet = screenWidth >= 600;
-
                 return Container(
                   width: double.infinity,
                   height: double.infinity,
@@ -85,10 +81,9 @@ class _PdfBookFlipLocalState extends State<PdfBookFlipLocal> {
                   child: Stack(
                     fit: StackFit.expand,
                     children: [
-                      // PDF Content يمتد ويتكيف مع كل شاشة
                       Image(
                         image: img.image,
-                        fit: BoxFit.fill, // يمتد ويملأ الشاشة بدون حواف
+                        fit: BoxFit.fill,
                         width: double.infinity,
                         height: double.infinity,
                         alignment: widget.alignment,
