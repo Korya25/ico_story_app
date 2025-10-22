@@ -6,7 +6,6 @@ import 'package:gap/gap.dart';
 import 'package:ico_story_app/core/style/app_colors.dart';
 import 'package:ico_story_app/core/utils/context_extension.dart';
 import 'package:ico_story_app/core/widgets/custom_text.dart';
-import 'package:ico_story_app/features/home/widgets/common/custom_card_bacground.dart';
 
 class HomeStoryCard extends StatelessWidget {
   const HomeStoryCard({

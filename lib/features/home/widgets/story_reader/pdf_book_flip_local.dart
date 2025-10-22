@@ -11,10 +11,12 @@ class PdfBookFlipLocal extends StatefulWidget {
     super.key,
     required this.pdfPath,
     this.alignment = Alignment.center,
+    this.onPdfLoaded, // إضافة callback
   });
 
   final String pdfPath;
   final Alignment alignment;
+  final VoidCallback? onPdfLoaded; // Callback عند اكتمال التحميل
 
   @override
   State<PdfBookFlipLocal> createState() => _PdfBookFlipLocalState();
@@ -23,6 +25,7 @@ class PdfBookFlipLocal extends StatefulWidget {
 class _PdfBookFlipLocalState extends State<PdfBookFlipLocal> {
   final _controller = GlobalKey<PageFlipWidgetState>();
   List<Image> pages = [];
+  bool _isLoading = true;
 
   @override
   void initState() {
@@ -38,33 +41,48 @@ class _PdfBookFlipLocalState extends State<PdfBookFlipLocal> {
   }
 
   Future<void> _loadPages() async {
-    final doc = await PdfDocument.openAsset(widget.pdfPath);
+    try {
+      final doc = await PdfDocument.openAsset(widget.pdfPath);
 
-    for (int i = 1; i <= doc.pagesCount; i++) {
-      final page = await doc.getPage(i);
+      for (int i = 1; i <= doc.pagesCount; i++) {
+        final page = await doc.getPage(i);
 
-      final pageImage = await page.render(
-        width: page.width * 0.7,
-        height: page.height * 2,
-        format: PdfPageImageFormat.jpeg,
-      );
+        final pageImage = await page.render(
+          width: page.width * 0.7,
+          height: page.height * 2,
+          format: PdfPageImageFormat.jpeg,
+        );
 
-      if (pageImage != null) {
-        pages.add(Image.memory(pageImage.bytes));
+        if (pageImage != null) {
+          pages.add(Image.memory(pageImage.bytes));
+        }
+
+        await page.close();
       }
 
-      await page.close();
-    }
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
 
-    setState(() {});
+        // استدعاء callback بعد اكتمال التحميل
+        widget.onPdfLoaded?.call();
+      }
+    } catch (e) {
+      print('Error loading PDF: $e');
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    if (pages.isEmpty) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator(color: AppColors.white)),
-      );
+    // لا نعرض شيء أثناء التحميل (الـ loading يتم في StoryReaderView)
+    if (_isLoading || pages.isEmpty) {
+      return const SizedBox.shrink();
     }
 
     return Scaffold(

@@ -192,7 +192,7 @@ class StoryList {
     ),
     StoryModel(
       id: '7',
-      title: 'على والسباق',
+      title: 'علي والسباق',
       pdfPath: 'assets/pdf/char/Ali_Wa_Alsibaq.pdf',
       audioPath: 'audio/char/Ali_Wa_Alsibaq.mp3',
       coverImage: 'assets/images/char_image/18-Ali-Wa-Alsibaq.webp',

@@ -16,7 +16,7 @@ class StoryCategoriesList {
     ),
     StoryCategoryModel(
       id: AppConstant.surah,
-      title: 'قصص سيرة',
+      title: 'قصص السيرة النبوية',
       imagePath: AppAssets.serahStories,
     ),
   ];

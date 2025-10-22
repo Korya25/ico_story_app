@@ -34,6 +34,8 @@ class _StoryReaderViewState extends State<StoryReaderView>
   // State
   bool _showAudioControls = false;
   final Alignment _pageAlignment = Alignment.center;
+  bool _isPdfLoaded = false; // حالة تحميل PDF
+
   bool get _isSurah => widget.categoryId == AppConstant.surah;
   String? get _storyTypeLabel {
     if (_isSurah) return null;
@@ -78,6 +80,15 @@ class _StoryReaderViewState extends State<StoryReaderView>
     )..repeat();
   }
 
+  // Callback عند اكتمال تحميل PDF
+  void _onPdfLoaded() {
+    if (mounted) {
+      setState(() {
+        _isPdfLoaded = true;
+      });
+    }
+  }
+
   @override
   void dispose() {
     _audioManager?.dispose();
@@ -105,17 +116,18 @@ class _StoryReaderViewState extends State<StoryReaderView>
         color: AppColors.primary,
         child: Column(
           children: [
-            // Header
-            StoryReaderHeader(
-              storyTitle: widget.story.title,
-              onAudioToggle: _isSurah
-                  ? null
-                  : () => setState(() {
-                      _showAudioControls = !_showAudioControls;
-                    }),
-              storyType: _storyTypeLabel,
-              isAudioVisible: _showAudioControls && !_isSurah,
-            ),
+            // Header - يظهر فقط بعد التحميل
+            if (_isPdfLoaded)
+              StoryReaderHeader(
+                storyTitle: widget.story.title,
+                onAudioToggle: _isSurah
+                    ? null
+                    : () => setState(() {
+                        _showAudioControls = !_showAudioControls;
+                      }),
+                storyType: _storyTypeLabel,
+                isAudioVisible: _showAudioControls && !_isSurah,
+              ),
 
             // Main Content Area
             Expanded(
@@ -123,16 +135,32 @@ class _StoryReaderViewState extends State<StoryReaderView>
                 color: AppColors.cardBackground,
                 child: Stack(
                   children: [
-                    // PDF Viewer - Main Content (fills available space)
+                    // PDF Viewer - Main Content
                     Positioned.fill(
                       child: PdfBookFlipLocal(
                         alignment: _pageAlignment,
                         pdfPath: widget.story.pdfPath,
+                        onPdfLoaded: _onPdfLoaded, // Callback للتحميل
                       ),
                     ),
 
-                    // Audio Controls overlay (does not affect layout)
-                    if (_showAudioControls &&
+                    // Loading Overlay - يغطي كل شيء أثناء التحميل
+                    if (!_isPdfLoaded)
+                      Positioned.fill(
+                        child: Container(
+                          color: AppColors.primary,
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              color: AppColors.cardBackground,
+                              strokeWidth: 3,
+                            ),
+                          ),
+                        ),
+                      ),
+
+                    // Audio Controls - يظهر فقط بعد التحميل
+                    if (_isPdfLoaded &&
+                        _showAudioControls &&
                         !_isSurah &&
                         _audioManager != null)
                       Positioned(
