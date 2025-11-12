@@ -17,19 +17,31 @@ class HomeHeaderSection extends StatelessWidget {
         child: Column(
           children: [
             Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               spacing: 20,
               children: [
-                AppAnimations.pulse(
-                  Image.asset(
-                    'assets/images/app/directaid.png',
-                    width: isTablet ? 220 : 120,
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    color: AppColors.cardBackground,
                   ),
-                ),
-                AppAnimations.pulse(
-                  Image.asset(
+                  padding: EdgeInsets.all(12),
+                  child: Image.asset(
                     'assets/images/app/icologo.png',
                     width: isTablet ? 200 : 100,
+                    height: 100,
+                  ),
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    color: AppColors.cardBackground,
+                  ),
+                  padding: EdgeInsets.all(12),
+                  child: Image.asset(
+                    'assets/images/app/directaid.png',
+                    width: isTablet ? 220 : 100,
+                    height: 100,
                   ),
                 ),
               ],
