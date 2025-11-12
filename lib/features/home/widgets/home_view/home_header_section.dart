@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:ico_story_app/core/constants/app_assets.dart';
 import 'package:ico_story_app/core/style/app_colors.dart';
 import 'package:ico_story_app/core/utils/context_extension.dart';
 import 'package:ico_story_app/core/widgets/animate_do.dart';
@@ -17,8 +16,23 @@ class HomeHeaderSection extends StatelessWidget {
       child: Center(
         child: Column(
           children: [
-            AppAnimations.pulse(
-              Image.asset(AppAssets.icoLogo, width: isTablet ? 200 : 100),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              spacing: 20,
+              children: [
+                AppAnimations.pulse(
+                  Image.asset(
+                    'assets/images/app/directaid.png',
+                    width: isTablet ? 220 : 120,
+                  ),
+                ),
+                AppAnimations.pulse(
+                  Image.asset(
+                    'assets/images/app/icologo.png',
+                    width: isTablet ? 200 : 100,
+                  ),
+                ),
+              ],
             ),
             Gap(isTablet ? 24 : 18),
             CustomText(
