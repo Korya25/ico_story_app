@@ -55,7 +55,7 @@ class _StoryReaderViewState extends State<StoryReaderView>
   void _initializeManagers() {
     if (!_isSurah) {
       _audioManager = AudioManager(
-        audioAssetPath: widget.story.audioPath,
+        audioAssetPath: widget.story.audioPath ?? '',
         onStateChanged: () {
           if (mounted) setState(() {});
         },
